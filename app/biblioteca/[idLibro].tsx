@@ -1,0 +1,21 @@
+import ParallaxScrollView from "@/components/parallax-scroll-view";
+import { useLocalSearchParams } from "expo-router";
+import { Text } from "react-native-paper";
+
+type Props = {
+    id: number;
+    nombre: string,
+    autor: string,
+};
+
+
+export default function Libro({ id, nombre, autor }: Props) {
+    const { idLibro } = useLocalSearchParams();
+    return (
+        <ParallaxScrollView >
+            <Text>Titulo aaa</Text>
+
+        </ParallaxScrollView>
+
+    )
+}

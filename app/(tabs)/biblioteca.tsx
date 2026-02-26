@@ -1,0 +1,43 @@
+
+import ParallaxScrollView from "@/components/parallax-scroll-view";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Fonts } from '@/constants/theme';
+import { ScrollView, StyleSheet } from "react-native";
+import { Estante } from "../biblioteca/estante";
+
+const EstanteData = [
+    { id: 1, nombre: 'Ficción', cantidad: '12' },
+    { id: 2, nombre: 'Romance', cantidad: '2' },
+    { id: 3, nombre: 'Ciencia Ficción', cantidad: '0' },
+    { id: 4, nombre: 'Ciencia Ficción', cantidad: '0' },
+    { id: 5, nombre: 'Ciencia Ficción', cantidad: '0' },
+];
+
+export default function Biblioteca() {
+    return (
+        <ParallaxScrollView>
+            <ThemedView style={styles.titleContainer}>
+                <ThemedText type="title"
+                    style={{ fontFamily: Fonts.rounded, }}>
+                    Biblioteca
+                </ThemedText>     
+            </ThemedView>
+            <ScrollView>
+                    {EstanteData.map((estante) => (
+                        <Estante key={estante.id}
+                            id={estante.id}
+                            nombre={estante.nombre}
+                            cantidad={estante.cantidad} />
+                    ))}
+            </ScrollView>
+        </ParallaxScrollView>
+    )
+}
+
+const styles = StyleSheet.create({
+    titleContainer: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+});
