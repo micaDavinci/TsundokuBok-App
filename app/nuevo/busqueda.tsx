@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Text, TextInput, IconButton, ActivityIndicator } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 import { api } from '@/api/api';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, IconButton, Text, TextInput } from 'react-native-paper';
 import Resultado from './resultado';
 
-export const Busqueda predictiva = () => {
+export default function BusquedaPredictiva(){
     const [query, setQuery] = useState("");
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -63,16 +63,26 @@ export const Busqueda predictiva = () => {
             {loading ? (
                 <ActivityIndicator animating={true} color="#C69D91" style={{ marginTop: 20 }} />
             ) : (
-                <FlatList
+                <>
+                {/* <FlatList
                     data={books}
                     keyExtractor={(item) => item.id.toString()}
-                    numColumns={2} // Aquí definimos el "grid" de 2 columnas
+                    numColumns={2}
                     renderItem={({ item }) => <Resultado book={item} />}
                     contentContainerStyle={styles.listContent}
                     ListEmptyComponent={
                         <Text style={styles.emptyText}>No hay libros que mostrar</Text>
                     }
-                />
+                /> */}
+
+                {books.map(book => (
+                    <Resultado book={book}/>
+                ))}
+
+
+                </>
+
+                
             )}
         </View>
     );

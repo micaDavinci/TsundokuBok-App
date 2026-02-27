@@ -4,12 +4,18 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 
 type BookType = {
-  id: number;
-  volumeInfo: String;
+  id: number,
+  volumeInfo: {
+    title: string,
+    authors?: string[],
+    imageLinks?: {
+      thumbnail: string;
+    }
+  },
 };
 
 type Props = {
-  estante: BookType;
+  book: BookType,
 };
 
 const Resultado = ({ book } : Props) => {

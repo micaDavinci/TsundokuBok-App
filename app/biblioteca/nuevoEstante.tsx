@@ -1,19 +1,63 @@
-import { Stack } from "expo-router";
-import React from "react";
+import { api } from '@/api/api';
+import { useAuth } from '@/context/AuthContext';
+import { Stack, useNavigation, useRouter } from 'expo-router';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Card, Text, TextInput } from "react-native-paper";
+import { Button, Card, Dialog, Text, TextInput } from 'react-native-paper';
+
 
 export default function nuevoEstante() {
-
+    const {token} = useAuth();
     const [nombre, setNombre] = React.useState("");
+    const [visible, setVisible] = React.useState(false);
+    const router = useRouter();
+    const navigation = useNavigation();
 
+
+    const handleNew = async() =>{
+        try {
+            const request = await api.post(`/nuevo-estante`,{
+                nombre
+            }, {
+                headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+            })
+
+            if (request.data.success) {
+                setNombre(request.data.result);
+                
+            } 
+            <Dialog visible={visible} onDismiss={hideDialog}>
+                    <Dialog.Content>
+                        <Text>
+                            {request.data.message};
+                        </Text>
+                    </Dialog.Content>
+                </Dialog>
+            navigation.goBack();
+        } catch (error: any) {
+            console.error("Error completo", error);
+            const mensaje = error.response?.data?.message;
+            
+            <Dialog visible={visible} onDismiss={hideDialog}>
+                    <Dialog.Content>
+                        <Text>
+                            {mensaje};
+                        </Text>
+                    </Dialog.Content>
+                </Dialog>
+                
+        }
+    }
+
+    const hideDialog = () => setVisible(false);
     const handleCancel = () => {
-        router.replace('/(tabs)/biblioteca');
+        router.back();
         
     }
-    handleCancel
+
     return (
-        // Corregido: styles.mainContainer
         <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
             <Card style={styles.card}>
@@ -40,7 +84,7 @@ export default function nuevoEstante() {
                         mode="contained"
                         style={styles.button}
                         labelStyle={{ color: '#E4DAC9', fontWeight: 'bold' }}
-                        onPress={() => console.log('Guardado')}
+                        onPress={handleNew}
                     >
                         Guardar
                     </Button>
@@ -49,7 +93,7 @@ export default function nuevoEstante() {
                         mode="text"
                         style={styles.buttonSecondary}
                         labelStyle={{ color: '#808080' }}
-                        onPress={() => console.log('Cancelado')}
+                        onPress={handleCancel}
                     >
                         Cancelar
                     </Button>
@@ -57,6 +101,7 @@ export default function nuevoEstante() {
             </Card>
         </View>
     );
+    
 }
 
 const styles = StyleSheet.create({

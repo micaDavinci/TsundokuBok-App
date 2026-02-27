@@ -1,31 +1,40 @@
 
 import { api } from "@/api/api";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts } from '@/constants/theme';
 import { useAuth } from "@/context/AuthContext";
-import { useNavigation } from '@react-navigation/native';
-import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet } from "react-native";
-import { Button, FAB, Text } from "react-native-paper";
-import { Estante } from "../bibliotecaGroup/estante";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import { Alert, StyleSheet } from "react-native";
+import { FAB, IconButton, Text } from "react-native-paper";
+import { View } from "react-native-reanimated/lib/typescript/Animated";
+import { Estante } from "../biblioteca/estante";
 
 export default function Biblioteca() {
     const { token } = useAuth();
     const [estantes, setEstantes] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const {logout} = useAuth();
-    const navigation = useNavigation();
-    const router = useRouter();
 
-    useEffect( ()=> {
-        if (token) {
+    // useEffect( ()=> {
+    //     if (token) {
+    //         getEstantes();
+    //     }
+    // }, [token])
+
+    useFocusEffect(
+        useCallback(() => {
             getEstantes();
-        }
-    }, [token])
+        }, [])
+    );
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        getEstantes();
+    };
 
     const getEstantes = async () => {
+        setLoading(true);
         try {
             const request = await api.get("/estantes", {
                 headers: {
@@ -41,26 +50,61 @@ export default function Biblioteca() {
             console.error("Error completo", error);
             const mensaje = error.response?.data?.message
             Alert.alert("Error", mensaje);
+        } finally{
+            setLoading(false);
+            setRefreshing(false);
         }
     };
 
-    const handleLogout = async () => {
-        await logout();
-        router.replace("./index");
+    const router = useRouter();
+    const handleNuevo = () => {
+        router.push('/biblioteca/nuevoEstante');
     }
 
-    const handleNuevo = async () => {
+    const handleLogout = async() => {
         await logout();
-        router.replace("/biblioteca/nuevoEstante");
     }
-    
+
     return (
         <>
         <Stack.Screen options={{ headerShown: false }} />
         
         <ParallaxScrollView>
-            
-            <ThemedView style={styles.titleContainer}>
+            <View style={styles.headerRow}>
+                    <Text variant="displaySmall" style={styles.titulo}>
+                        Biblioteca
+                    </Text>
+                    
+                    {/* Botón de Logout más elegante (solo icono o borde sutil) */}
+                    <IconButton
+                        icon="logout"
+                        mode="outlined"
+                        iconColor="#C69D91"
+                        size={24}
+                        onPress={handleLogout}
+                        style={styles.logoutBtn}
+                    />
+                </View>
+
+                {/* Contenido principal: Quitamos el ScrollView interno */}
+                <View style={styles.listContainer}>
+                    {estantes.length === 0 ? (
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
+                            <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
+                        </View>
+                    ) : (
+                        estantes.map((estante) => (
+                            <Estante estante={estante} />
+                        ))                    
+                    )}
+                </View>
+
+                {/* Espaciado final para que el último estante no quede bajo el FAB */}
+                <View style={{ height: 80 }} />
+
+
+            {/* <ThemedView style={styles.titleContainer}>
                 <ThemedText type="title"
                     style={styles.titulo}>
                     Biblioteca
@@ -83,7 +127,7 @@ export default function Biblioteca() {
                     ))                    
                 )               
                 }
-            </ScrollView>
+                            </ScrollView> */}
 
             <FAB
                 icon="plus"
@@ -98,15 +142,38 @@ export default function Biblioteca() {
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
+    headerRow: {
         flexDirection: 'row',
-        gap: 8,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        marginTop: 20,
+        marginBottom: 10,
     },
     titulo: {
         color: '#E4DAC9',
-        marginBottom: 20,
         fontWeight: 'bold',
-        fontFamily: Fonts.rounded
+    },
+    logoutBtn: {
+        borderColor: '#C69D91',
+        borderRadius: 12,
+    },
+    listContainer: {
+        paddingHorizontal: 16,
+    },
+    emptyContainer: {
+        marginTop: 40,
+        alignItems: 'center',
+    },
+    emptyText: {
+        color: '#E4DAC9',
+        fontSize: 18,
+        opacity: 0.8,
+    },
+    emptySub: {
+        color: '#C69D91',
+        fontSize: 14,
+        marginTop: 8,
     },
     fab: {
         position: 'absolute',

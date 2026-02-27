@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { Button, Card, Text, TextInput } from 'react-native-paper';
@@ -35,6 +35,7 @@ export default function Login() {
 
   return (
     <View style={styles.mainContainer}>
+      <Stack.Screen options={{ headerShown: false }} />
       <Card style={styles.card}>
         <Card.Content>
           <Text variant='displaySmall' style={styles.tituloTexto}>Login</Text>

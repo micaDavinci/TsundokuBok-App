@@ -14,14 +14,14 @@ const Prestamos = [
     { id: 4, titulo: 'La selección', autor: 'Kiera Cass', persona: 'Popi', estado: 'prestado' },
 
 ];
- 
+
 
 export default function prestamos() {
     const router = useRouter();
-const handleNuevo = () => {
-    router.push('/prestamo/nuevoPrestamo');
-  }
-  
+    const handleNuevo = () => {
+        router.push('/prestamo/nuevoPrestamo');
+    }
+
     return (
         <ParallaxScrollView>
             <ThemedView style={styles.titleContainer}>
