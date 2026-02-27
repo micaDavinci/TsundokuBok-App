@@ -11,7 +11,7 @@ const estanteList = [
     { id: 1, titulo: 'Los juegos del hambre', autor: 'Susane Collins' },
 ];
 
-export default function idEstante() {
+export  const idEstante = () => {
     return (
         <>
             <Stack.Screen options={{ headerShown: false }} />

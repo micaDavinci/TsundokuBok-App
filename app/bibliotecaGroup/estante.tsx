@@ -1,35 +1,36 @@
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Card, Text, TouchableRipple } from 'react-native-paper';
 
-type Props = {
-    id: number;
-    nombre: string,
-    cantidad: string,
+type EstanteType = {
+  id_estante: number;
+  nombre: string;
+  cantidad_libros: number;
 };
 
-export const Estante = ({ id, nombre, cantidad }: Props) => {
+type Props = {
+  estante: EstanteType;
+};
+
+export const Estante = ( {estante} : Props ) => {
     const router = useRouter();
-
-    const handlePress = () => {
-        router.push({
-            pathname: '/biblioteca/[idEstante]',
-            params: { idEstante: String(id) }
-        });
-    }
-
     return (
         <TouchableRipple
             // onPress={handlePress}
             rippleColor="rgba(0, 0, 0, .32)"
         >
-            <Card style={styles.card} onPress={handlePress}>
+            <Link 
+            href="/" 
+            dismissTo
+            >
+            <Card style={styles.card}>
                 <Card.Content>
-                    <Text variant="titleLarge" style={styles.titulo}>{nombre}</Text>
-                    <Text variant='labelLarge' style={styles.cantidad}>Cantidad: {cantidad}</Text>
+                    <Text variant="titleLarge" style={styles.titulo}>{estante.nombre}</Text>
+                    <Text variant='labelLarge' style={styles.cantidad}>Cantidad: {estante.cantidad_libros}</Text>
                 </Card.Content>
             </Card>
+            </Link>
         </TouchableRipple>
     )
 };

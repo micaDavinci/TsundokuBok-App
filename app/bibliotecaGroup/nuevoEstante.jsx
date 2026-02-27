@@ -6,6 +6,12 @@ import { Button, Card, Text, TextInput } from "react-native-paper";
 export default function nuevoEstante() {
 
     const [nombre, setNombre] = React.useState("");
+
+    const handleCancel = () => {
+        router.replace('/(tabs)/biblioteca');
+        
+    }
+    handleCancel
     return (
         // Corregido: styles.mainContainer
         <View style={styles.mainContainer}>

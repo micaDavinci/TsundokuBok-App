@@ -1,45 +1,125 @@
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
-import { Stack } from "expo-router";
-import React from "react";
-import { StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import React, { useState } from 'react';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Text, TextInput, IconButton, ActivityIndicator } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { api } from '@/api/api';
+import Resultado from './resultado';
 
-export default function BusquedaPredictiva() {
+export const Busqueda predictiva = () => {
+    const [query, setQuery] = useState("");
+    const [books, setBooks] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const navigation = useNavigation();
 
-    const [text, setText] = React.useState("");
+    const buscarLibro = async () => {
+        if (!query) return;
+        setLoading(true);
+        try {
+            const res = await api.get("/buscar-libros", {
+                params: { q: query }
+            });
+            setBooks(res.data);
+        } catch (error) {
+            console.error("Error buscando libros:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <>
-            <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.mainContainer}>
+            {/* Header: Título y Volver */}
+            <View style={styles.header}>
+                <Text style={styles.titulo}>Buscar libro</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text style={styles.linkRosa}>‹ Volver</Text>
+                </TouchableOpacity>
+            </View>
 
-            <ParallaxScrollView>
-                <ThemedView style={styles.titleContainer}>                   
-                    <ThemedText type='title'
-                        style={{ fontFamily: Fonts.rounded, }}>
-                        Búsqueda predictiva
-                    </ThemedText>                   
-                </ThemedView>
-                <TextInput 
-                            label="Título o autor"
-                            value={text}
-                            mode="outlined"
-                           onChangeText={text => setText(text)}
-                        />
-            </ParallaxScrollView>
-        </>
-    )
-}
+            {/* Barra de Búsqueda */}
+            <View style={styles.searchRow}>
+                <TextInput
+                    mode="outlined"
+                    placeholder="Ej: El principito"
+                    value={query}
+                    onChangeText={setQuery}
+                    style={styles.input}
+                    outlineColor="#E4DAC9"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
+                    placeholderTextColor="rgba(228, 218, 201, 0.4)"
+                />
+                <IconButton
+                    icon="magnify"
+                    mode="contained"
+                    containerColor="#C69D91"
+                    iconColor="#2B3035"
+                    size={30}
+                    onPress={buscarLibro}
+                />
+            </View>
+
+            {/* Lista de Resultados */}
+            {loading ? (
+                <ActivityIndicator animating={true} color="#C69D91" style={{ marginTop: 20 }} />
+            ) : (
+                <FlatList
+                    data={books}
+                    keyExtractor={(item) => item.id.toString()}
+                    numColumns={2} // Aquí definimos el "grid" de 2 columnas
+                    renderItem={({ item }) => <Resultado book={item} />}
+                    contentContainerStyle={styles.listContent}
+                    ListEmptyComponent={
+                        <Text style={styles.emptyText}>No hay libros que mostrar</Text>
+                    }
+                />
+            )}
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        flexDirection: 'row',
-        gap: 8,
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#2B3035',
+        paddingTop: 50, // Espacio para el notch del celular
     },
-    button: {
-        color: "#E4DAC9",
-        backgroundColor: "#6A7666",
-        margin: 8
+    header: {
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    titulo: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#E4DAC9',
+    },
+    linkRosa: {
+        color: '#C69D91',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    searchRow: {
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    input: {
+        flex: 1,
+        backgroundColor: '#6A7666',
+        marginRight: 10,
+    },
+    listContent: {
+        paddingHorizontal: 10,
+        paddingBottom: 20,
+    },
+    emptyText: {
+        color: '#E4DAC9',
+        textAlign: 'center',
+        marginTop: 50,
+        opacity: 0.5
     }
 });

@@ -1,25 +1,36 @@
 import { api } from "@/api/api";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { Text } from "react-native-paper";
 
 type User = {
-  nombre?: string;
-  email?: string;
-  is_admin?: boolean;
-  biblioteca: {
-    nombre: string;
-  };
-  role: string;
+    nombre?: string;
+    email?: string;
+    is_admin?: boolean;
+    biblioteca: {
+        nombre: string;
+    };
+    role: string;
+};
+
+type JwtPayload = {
+    email?: string;
+    nombre?: string;
+    is_admin?: boolean;
+    role?: string;
+    biblioteca: {
+        nombre: string;
+    };
 };
 
 type AuthContextType = {
-  logueado: boolean;
-  login: (data: { accessToken: string; refreshToken: string }) => Promise<void>;
-  logout: () => Promise<void>;
-  token: string | null;
-  user: User | null;
-  loading: boolean;
+    logueado: boolean;
+    login: (data: { accessToken: string; refreshToken: string }) => Promise<void>;
+    logout: () => Promise<void>;
+    token: string | null;
+    user: User | null;
+    loading: boolean;
 };
 
 
@@ -27,9 +38,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [logueado, setLogueado] = useState(false);
-    const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
+    const [token, setToken] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     let guest = "GUEST";
     let admin = "ADMIN";
@@ -60,35 +71,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             const request = await api.get(endpoint, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                    Authorization: `Bearer ${refreshToken}`
                 }
             });
 
             if (request.data.success) {
                 const newAccessToken = request.data.accessToken;
-                const decoded = jwtDecode(newAccessToken);
+                const decoded = jwtDecode<JwtPayload>(newAccessToken);
                 console.log("TOKEN DECODIFICADO:", decoded);
                 setLogueado(true);
                 setToken(newAccessToken);
 
-                // if (authType === guest) {
-                //     setUser({
-                //         email: decoded.email,
-                //         biblioteca: {
-                //             nombre: decoded.biblioteca.nombre
-                //         },
-                //         role: guest
-                //     });
-                // } else {
-                //     setUser({
-                //         nombre: decoded.nombre,
-                //         is_admin: decoded.is_admin,
-                //         biblioteca: {
-                //             nombre: decoded.biblioteca.nombre
-                //         },
-                //         role: decoded.is_admin ? admin : lector
-                //     });
-                // }
+                if (authType === guest) {
+                    setUser({
+                        email: decoded.email,
+                        biblioteca: {
+                            nombre: decoded.biblioteca.nombre
+                        },
+                        role: guest
+                    });
+                } else {
+                    setUser({
+                        nombre: decoded.nombre,
+                        is_admin: decoded.is_admin,
+                        biblioteca: {
+                            nombre: decoded.biblioteca.nombre
+                        },
+                        role: decoded.is_admin ? admin : lector
+                    });
+                }
             }
 
         } catch (error) {
@@ -101,32 +112,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const login = async ({ accessToken, refreshToken }: { accessToken: string; refreshToken: string }) => {
-        const decoded = jwtDecode(accessToken);
+        const decoded = jwtDecode<JwtPayload>(accessToken);
         console.log("TOKEN DECODIFICADO:", decoded);
-        // setLogueado(true);
-        // setToken(accessToken);
+        console.log("TOKEN DECODIFICADO:", decoded);
 
-        // if (decoded.role === guest) {
-        //     setUser({
-        //         email: decoded.email,
-        //         biblioteca: {
-        //             nombre: decoded.biblioteca.nombre
-        //         },
-        //         role: guest
-        //     });
 
-        //     await SecureStore.setItemAsync("authType", guest);
-        // } else {
-        //     setUser({
-        //     nombre: decoded.nombre,
-        //     is_admin: decoded.is_admin,
-        //     biblioteca: {
-        //         nombre: decoded.biblioteca.nombre
-        //     },
-        //     role: decoded.is_admin ? admin : lector
-        // });
-        //     await SecureStore.setItemAsync("authType", lector);
-        // }
+        setLogueado(true);
+        setToken(accessToken);
+
+        if (decoded.role === guest) {
+            setUser({
+                email: decoded.email,
+                biblioteca: {
+                    nombre: decoded.biblioteca.nombre
+                },
+                role: guest
+            });
+
+            await SecureStore.setItemAsync("authType", guest);
+        } else {
+            const roleFinal = decoded.is_admin ? admin : lector;
+
+            setUser({
+                nombre: decoded.nombre,
+                is_admin: decoded.is_admin,
+                biblioteca: {
+                    nombre: decoded.biblioteca.nombre,
+                },
+                role: roleFinal,
+            });
+
+            await SecureStore.setItemAsync("authType", roleFinal);
+        }
+
         await SecureStore.setItemAsync("token", refreshToken);
     }
 
@@ -135,19 +153,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setToken(null);
         setUser(null);
         await SecureStore.deleteItemAsync("token");
-    await SecureStore.deleteItemAsync("authType");
+        await SecureStore.deleteItemAsync("authType");
     }
 
     return (
-        <AuthContext.Provider value={{logueado, login, logout, token, user, loading}}>
+        <AuthContext.Provider value={{ logueado, login, logout, token, user, loading }}>
             {(loading)
-            ?
-                <div>
+                ?
+                <Text>
                     Cargando...
-                </div>
+                </Text>
                 :
                 children
-        }
+            }
         </AuthContext.Provider>
     )
 };
+
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth debe usarse dentro de un AuthProvider");
+    }
+    return context;
+}

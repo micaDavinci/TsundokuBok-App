@@ -1,41 +1,88 @@
 
+import { api } from "@/api/api";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Fonts } from '@/constants/theme';
-import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
-import { FAB } from "react-native-paper";
-import { Estante } from "../biblioteca/estante";
-
-const EstanteData = [
-    { id: 1, nombre: 'Ficción', cantidad: '12' },
-    { id: 2, nombre: 'Romance', cantidad: '2' },
-    { id: 3, nombre: 'Ciencia Ficción', cantidad: '0' },
-    { id: 4, nombre: 'Ciencia Ficción', cantidad: '0' },
-    { id: 5, nombre: 'Ciencia Ficción', cantidad: '0' },
-];
+import { useAuth } from "@/context/AuthContext";
+import { useNavigation } from '@react-navigation/native';
+import { Stack, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Alert, ScrollView, StyleSheet } from "react-native";
+import { Button, FAB, Text } from "react-native-paper";
+import { Estante } from "../bibliotecaGroup/estante";
 
 export default function Biblioteca() {
+    const { token } = useAuth();
+    const [estantes, setEstantes] = useState([]);
+    const {logout} = useAuth();
+    const navigation = useNavigation();
     const router = useRouter();
-    const handleNuevo = () => {
-        router.push('/biblioteca/nuevoEstante');
+
+    useEffect( ()=> {
+        if (token) {
+            getEstantes();
+        }
+    }, [token])
+
+    const getEstantes = async () => {
+        try {
+            const request = await api.get("/estantes", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (request.data.success) {
+                setEstantes(request.data.result);
+            } else {
+                Alert.alert("Error", request.data.message);
+            }
+        } catch (error: any) {
+            console.error("Error completo", error);
+            const mensaje = error.response?.data?.message
+            Alert.alert("Error", mensaje);
+        }
+    };
+
+    const handleLogout = async () => {
+        await logout();
+        router.replace("./index");
     }
+
+    const handleNuevo = async () => {
+        await logout();
+        router.replace("/biblioteca/nuevoEstante");
+    }
+    
     return (
+        <>
+        <Stack.Screen options={{ headerShown: false }} />
+        
         <ParallaxScrollView>
+            
             <ThemedView style={styles.titleContainer}>
                 <ThemedText type="title"
                     style={styles.titulo}>
                     Biblioteca
                 </ThemedText>
+
+                <Button mode="contained" onPress={handleLogout}>
+                    Cerrar sesión
+                </Button>
             </ThemedView>
+
             <ScrollView>
-                {EstanteData.map((estante) => (
-                    <Estante key={estante.id}
-                        id={estante.id}
-                        nombre={estante.nombre}
-                        cantidad={estante.cantidad} />
-                ))}
+                {estantes.length === 0 ? (
+                    <Text>No hay estantes creados todavía</Text>
+                ) : (
+                    estantes.map((estante) => (
+                        <Estante 
+                            estante={estante}
+                        >
+                        </Estante>
+                    ))                    
+                )               
+                }
             </ScrollView>
 
             <FAB
@@ -46,6 +93,7 @@ export default function Biblioteca() {
             >
             </FAB>
         </ParallaxScrollView>
+        </>
     )
 }
 

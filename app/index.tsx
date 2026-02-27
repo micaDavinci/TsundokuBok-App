@@ -1,20 +1,38 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Button, Card, Text, TextInput } from 'react-native-paper';
-
+import { api } from '../api/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
+  const { login } = useAuth();
+  const router = useRouter();
 
   const [email, setEmail] = React.useState("");
   const [biblioteca, setBiblioteca] = React.useState("");
   const [contrasena, setContrasena] = React.useState("");
 
-  const router = useRouter();
 
-  const handleLogin = () => {
-    router.push('/(tabs)/biblioteca');
-  }
+  const handleLogin = async () => {
+    try {
+      const request = await api.post(`/login`, {
+        email, biblioteca, contrasena
+      });
+
+      if (request.data.success) {
+        login(request.data);
+        router.replace('/(tabs)/biblioteca');
+      } else {
+        Alert.alert(request.data.message);
+      }
+    } catch (error: any) {
+      console.error("Error completo", error);
+      const mensaje = error.response?.data?.message
+      Alert.alert("Error", mensaje);
+    }
+  };
+
   return (
     <View style={styles.mainContainer}>
       <Card style={styles.card}>
@@ -108,7 +126,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: 8,
-    backgroundColor: "#2B3035"
+    backgroundColor: "#E4DAC9"
   },
   button: {
     backgroundColor: "#6A7666",

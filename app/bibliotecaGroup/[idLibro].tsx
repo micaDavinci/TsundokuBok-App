@@ -9,7 +9,7 @@ type Props = {
 };
 
 
-export default function Libro({ id, nombre, autor }: Props) {
+export const Libro =({ id, nombre, autor }: Props) => {
     const { idLibro } = useLocalSearchParams();
     return (
         <ParallaxScrollView >
