@@ -2,7 +2,9 @@ import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Fonts } from "@/constants/theme";
+import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";
+import { FAB } from "react-native-paper";
 import { LibroPrestado } from "../prestamo/libroPrestado";
 
 const Prestamos = [
@@ -12,9 +14,14 @@ const Prestamos = [
     { id: 4, titulo: 'La selección', autor: 'Kiera Cass', persona: 'Popi', estado: 'prestado' },
 
 ];
-
+ 
 
 export default function prestamos() {
+    const router = useRouter();
+const handleNuevo = () => {
+    router.push('/prestamo/NuevoPrestamo');
+  }
+  
     return (
         <ParallaxScrollView>
             <ThemedView style={styles.titleContainer}>
@@ -23,6 +30,8 @@ export default function prestamos() {
                     Préstamos
                 </ThemedText>
             </ThemedView>
+
+            
 
             <ScrollView>
                 {Prestamos.map((prestado) => (
@@ -36,6 +45,12 @@ export default function prestamos() {
                 ))}
 
             </ScrollView>
+            <FAB
+                icon="plus"
+                size='medium'
+                style={styles.fab}
+                onPress={handleNuevo}
+            />
         </ParallaxScrollView>
     )
 }
@@ -44,5 +59,12 @@ const styles = StyleSheet.create({
     titleContainer: {
         flexDirection: 'row',
         gap: 8,
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#E4DAC9',
     }
 })

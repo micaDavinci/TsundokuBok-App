@@ -13,7 +13,7 @@ export default function Libro({ id, nombre, autor }: Props) {
     const { idLibro } = useLocalSearchParams();
     return (
         <ParallaxScrollView >
-            <Text>Titulo aaa</Text>
+            <Text>Información completa del libro</Text>
 
         </ParallaxScrollView>
 

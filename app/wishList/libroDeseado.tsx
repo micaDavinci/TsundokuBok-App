@@ -6,11 +6,10 @@ type Props = {
     id: number,
     titulo: string,
     autor: string,
-    persona: string,
-    estado: string,
+    prioridad: string,
 };
 
-export const LibroPrestado = ({ id, titulo, autor, persona, estado }: Props) => {
+export const LibroDeseado = ({ id, titulo, autor, prioridad }: Props) => {
     return (
         <Card style={styles.card}>
             <Card.Content style={styles.contentRow}>
@@ -21,8 +20,7 @@ export const LibroPrestado = ({ id, titulo, autor, persona, estado }: Props) => 
                 <View>
                     <Text variant="titleMedium" style={styles.titulo}>{titulo}</Text>
                     <Text style={styles.subtitulo}>{autor}</Text>
-                    <Text variant="titleMedium"style={styles.titulo}>{persona}</Text>
-                    <Text style={styles.estado}>{estado}</Text>
+                    <Text style={styles.titulo}>Prioridad: {prioridad}</Text>
                 </View>
             </Card.Content>
         </Card>
@@ -44,10 +42,6 @@ const styles = StyleSheet.create({
     },
     subtitulo: {
         color: "#6A7666",
-        paddingBottom: 16,
+        paddingBottom: 16
     },
-    estado: {
-        backgroundColor: '#808080',
-        marginTop: 8,
-    }
 });

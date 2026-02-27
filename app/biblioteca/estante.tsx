@@ -13,10 +13,10 @@ export const Estante = ({ id, nombre, cantidad }: Props) => {
     const router = useRouter();
 
     const handlePress = () => {
-        // router.push({
-        //     pathname: '/biblioteca/[idEstante]',
-        //     params: { idEstante: String(id) }
-        // });
+        router.push({
+            pathname: '/biblioteca/[idEstante]',
+            params: { idEstante: String(id) }
+        });
     }
 
     return (
@@ -24,7 +24,7 @@ export const Estante = ({ id, nombre, cantidad }: Props) => {
             // onPress={handlePress}
             rippleColor="rgba(0, 0, 0, .32)"
         >
-            <Card style={styles.card}>
+            <Card style={styles.card} onPress={handlePress}>
                 <Card.Content>
                     <Text variant='titleMedium' style={styles.titulo}>{nombre}</Text>
                     <Text variant='labelLarge' style={styles.cantidad}>Cantidad: {cantidad}</Text>

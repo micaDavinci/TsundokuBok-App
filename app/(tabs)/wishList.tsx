@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Fonts } from "@/constants/theme";
 import { ScrollView, StyleSheet } from "react-native";
-import { LibroDeseado } from "../libroDeseado";
+import { LibroDeseado } from "../wishList/libroDeseado";
 
 const Deseados = [
     { id: 1, titulo: 'La selección', autor: 'Kiera Cass', prioridad: 'alta'},
