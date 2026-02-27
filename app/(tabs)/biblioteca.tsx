@@ -4,9 +4,8 @@ import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { useAuth } from "@/context/AuthContext";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Alert, StyleSheet } from "react-native";
+import { Alert, RefreshControl, StyleSheet, View } from "react-native";
 import { FAB, IconButton, Text } from "react-native-paper";
-import { View } from "react-native-reanimated/lib/typescript/Animated";
 import { Estante } from "../biblioteca/estante";
 
 export default function Biblioteca() {
@@ -14,24 +13,13 @@ export default function Biblioteca() {
     const [estantes, setEstantes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const {logout} = useAuth();
-
-    // useEffect( ()=> {
-    //     if (token) {
-    //         getEstantes();
-    //     }
-    // }, [token])
+    const { logout } = useAuth();
 
     useFocusEffect(
         useCallback(() => {
             getEstantes();
         }, [])
     );
-
-    const onRefresh = () => {
-        setRefreshing(true);
-        getEstantes();
-    };
 
     const getEstantes = async () => {
         setLoading(true);
@@ -50,7 +38,7 @@ export default function Biblioteca() {
             console.error("Error completo", error);
             const mensaje = error.response?.data?.message
             Alert.alert("Error", mensaje);
-        } finally{
+        } finally {
             setLoading(false);
             setRefreshing(false);
         }
@@ -61,21 +49,34 @@ export default function Biblioteca() {
         router.push('/biblioteca/nuevoEstante');
     }
 
-    const handleLogout = async() => {
+    const handleLogout = async () => {
         await logout();
     }
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        getEstantes();
+    };
+
     return (
         <>
-        <Stack.Screen options={{ headerShown: false }} />
-        
-        <ParallaxScrollView>
-            <View style={styles.headerRow}>
+            <Stack.Screen options={{ headerShown: false }} />
+
+            <ParallaxScrollView headerBackgroundColor={{ light: '#6A7666', dark: '#2B3035' }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor="#C69D91"
+                        colors={["#C69D91"]}
+                    />
+                }
+            >
+                <View style={styles.headerRow}>
                     <Text variant="displaySmall" style={styles.titulo}>
                         Biblioteca
                     </Text>
-                    
-                    {/* Botón de Logout más elegante (solo icono o borde sutil) */}
+
                     <IconButton
                         icon="logout"
                         mode="outlined"
@@ -86,7 +87,6 @@ export default function Biblioteca() {
                     />
                 </View>
 
-                {/* Contenido principal: Quitamos el ScrollView interno */}
                 <View style={styles.listContainer}>
                     {estantes.length === 0 ? (
                         <View style={styles.emptyContainer}>
@@ -96,39 +96,12 @@ export default function Biblioteca() {
                     ) : (
                         estantes.map((estante) => (
                             <Estante estante={estante} />
-                        ))                    
+                        ))
                     )}
                 </View>
-
-                {/* Espaciado final para que el último estante no quede bajo el FAB */}
                 <View style={{ height: 80 }} />
 
-
-            {/* <ThemedView style={styles.titleContainer}>
-                <ThemedText type="title"
-                    style={styles.titulo}>
-                    Biblioteca
-                </ThemedText>
-
-                <Button mode="contained" onPress={handleLogout}>
-                    Cerrar sesión
-                </Button>
-            </ThemedView>
-
-            <ScrollView>
-                {estantes.length === 0 ? (
-                    <Text>No hay estantes creados todavía</Text>
-                ) : (
-                    estantes.map((estante) => (
-                        <Estante 
-                            estante={estante}
-                        >
-                        </Estante>
-                    ))                    
-                )               
-                }
-                            </ScrollView> */}
-
+            </ParallaxScrollView>
             <FAB
                 icon="plus"
                 size='medium'
@@ -136,7 +109,6 @@ export default function Biblioteca() {
                 onPress={handleNuevo}
             >
             </FAB>
-        </ParallaxScrollView>
         </>
     )
 }
@@ -146,7 +118,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 16,
         marginTop: 20,
         marginBottom: 10,
     },
@@ -159,7 +130,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     listContainer: {
-        paddingHorizontal: 16,
+
     },
     emptyContainer: {
         marginTop: 40,
@@ -177,9 +148,10 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        margin: 16,
+        margin: 20,
         right: 0,
         bottom: 0,
         backgroundColor: '#C69D91',
-    }
+        borderRadius: 50,
+    },
 });

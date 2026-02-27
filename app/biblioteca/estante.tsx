@@ -17,12 +17,12 @@ export const Estante = ( {estante} : Props ) => {
     const router = useRouter();
     return (
         <TouchableRipple
-            // onPress={handlePress}
-            rippleColor="rgba(0, 0, 0, .32)"
+            rippleColor="rgba(198, 157, 145, 0.2)"
+            style={styles.ripple}
         >
             <Link 
-            href="/" 
-            dismissTo
+            href={`/biblioteca/${estante.id_estante}`}
+                style={styles.link}
             >
             <Card style={styles.card}>
                 <Card.Content>
@@ -36,16 +36,29 @@ export const Estante = ( {estante} : Props ) => {
 };
 
 const styles = StyleSheet.create({
+    ripple: {
+        width: '100%',
+        marginBottom: 8,
+    },
+    link: {
+        width: '100%',
+    },
     card: {
-        gap: 8,
-        margin: 4,
-        backgroundColor: "#2B3035"
+        width: '100%',
+        backgroundColor: "#2B3035",
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "rgba(106, 118, 102, 0.3)",
+    },
+    content: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     titulo: {
         color: "#E4DAC9",
-        marginBottom: 6
     },
     cantidad: {
-        color: "#6A7666"
+        color: "#5A7362",
     },
 });

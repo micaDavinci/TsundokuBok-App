@@ -1,9 +1,8 @@
-import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Fonts } from "@/constants/theme";
 import { useRouter } from 'expo-router';
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 
 export default function nuevoLibro() {
@@ -17,7 +16,7 @@ export default function nuevoLibro() {
     }
 
     return (
-        <ParallaxScrollView>
+        <ScrollView>
             <ThemedView>
                 <ThemedText type="title"
                     style={styles.titulo}>
@@ -43,7 +42,7 @@ export default function nuevoLibro() {
                     </Button>
 
             </ThemedView>
-        </ParallaxScrollView>
+        </ScrollView>
     )
 }
 

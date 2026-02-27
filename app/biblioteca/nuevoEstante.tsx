@@ -1,64 +1,63 @@
 import { api } from '@/api/api';
 import { useAuth } from '@/context/AuthContext';
-import { Stack, useNavigation, useRouter } from 'expo-router';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, Card, Dialog, Text, TextInput } from 'react-native-paper';
+import { Stack, useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import { Button, Card, Snackbar, Text, TextInput } from 'react-native-paper';
 
 
 export default function nuevoEstante() {
-    const {token} = useAuth();
+    const { token } = useAuth();
     const [nombre, setNombre] = React.useState("");
     const [visible, setVisible] = React.useState(false);
     const router = useRouter();
-    const navigation = useNavigation();
+    const [mensaje, setMensaje] = useState("");
 
 
-    const handleNew = async() =>{
+    const handleNew = async () => {
         try {
-            const request = await api.post(`/nuevo-estante`,{
+            const request = await api.post(`/nuevo-estante`, {
                 nombre
             }, {
                 headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                    Authorization: `Bearer ${token}`
+                }
             })
 
             if (request.data.success) {
                 setNombre(request.data.result);
-                
-            } 
-            <Dialog visible={visible} onDismiss={hideDialog}>
-                    <Dialog.Content>
-                        <Text>
-                            {request.data.message};
-                        </Text>
-                    </Dialog.Content>
-                </Dialog>
-            navigation.goBack();
+                setMensaje("¡Estante creado con éxito!");
+                setVisible(true);
+
+                setTimeout(() => {
+                    router.back();
+                }, 1500);
+            }
         } catch (error: any) {
             console.error("Error completo", error);
-            const mensaje = error.response?.data?.message;
-            
-            <Dialog visible={visible} onDismiss={hideDialog}>
-                    <Dialog.Content>
-                        <Text>
-                            {mensaje};
-                        </Text>
-                    </Dialog.Content>
-                </Dialog>
-                
+            setMensaje(error.response?.data?.message);
+            Alert.alert("Error", mensaje);
         }
     }
 
-    const hideDialog = () => setVisible(false);
     const handleCancel = () => {
         router.back();
-        
+
     }
 
     return (
         <View style={styles.mainContainer}>
+            <Snackbar
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={2000}
+                style={{ backgroundColor: '#6A7666' }}
+                action={{
+                    label: 'OK',
+                    onPress: () => setVisible(false),
+                }}>
+                {mensaje}
+            </Snackbar>
             <Stack.Screen options={{ headerShown: false }} />
             <Card style={styles.card}>
                 <Card.Content>
@@ -70,6 +69,7 @@ export default function nuevoEstante() {
                         mode="outlined"
                         outlineColor="#E4DAC9"
                         activeOutlineColor="#E4DAC9"
+                        textColor="#E4DAC9"
                         style={styles.input}
                         onChangeText={setNombre}
                         theme={{
@@ -101,7 +101,7 @@ export default function nuevoEstante() {
             </Card>
         </View>
     );
-    
+
 }
 
 const styles = StyleSheet.create({
@@ -139,5 +139,5 @@ const styles = StyleSheet.create({
     },
     buttonSecondary: {
         marginTop: 8,
-    }
+    },
 });

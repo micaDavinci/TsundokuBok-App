@@ -1,5 +1,5 @@
-import type { PropsWithChildren } from 'react';
-import { StyleSheet } from 'react-native';
+import type { PropsWithChildren, ReactElement } from 'react';
+import { RefreshControlProps, StyleSheet } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -11,13 +11,17 @@ import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
-const HEADER_HEIGHT = 250;
+const HEADER_HEIGHT = 1;
 
 type Props = PropsWithChildren<{
+  headerBackgroundColor: { dark: string; light: string };
+  refreshControl?: ReactElement<RefreshControlProps>;
 }>;
 
 export default function ParallaxScrollView({
   children,
+  headerBackgroundColor,
+  refreshControl,
 }: Props) {
   const backgroundColor = useThemeColor({}, 'background');
   const colorScheme = useColorScheme() ?? 'light';
@@ -41,7 +45,23 @@ export default function ParallaxScrollView({
   });
 
   return (
-    <ThemedView style={styles.content}>{children}</ThemedView>
+    <ThemedView style={styles.container}>
+      <Animated.ScrollView 
+        ref={scrollRef} 
+        scrollEventThrottle={16} 
+        refreshControl={refreshControl} // Ahora sí funcionará
+      >
+        <Animated.View
+          style={[
+            styles.header,
+            { backgroundColor: headerBackgroundColor[colorScheme] }, // Se arregla al recibir la prop
+            headerAnimatedStyle,
+          ]}>
+          {/* Aquí puedes dejarlo vacío si no quieres imagen */}
+        </Animated.View>
+        <ThemedView style={styles.content}>{children}</ThemedView>
+      </Animated.ScrollView>
+    </ThemedView>
   );
 }
 

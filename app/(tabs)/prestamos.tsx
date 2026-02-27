@@ -3,7 +3,8 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Fonts } from "@/constants/theme";
 import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
+import { useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { FAB } from "react-native-paper";
 import { LibroPrestado } from "../prestamo/libroPrestado";
 
@@ -18,12 +19,27 @@ const Prestamos = [
 
 export default function prestamos() {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const handleNuevo = () => {
         router.push('/prestamo/nuevoPrestamo');
     }
 
+    const onRefresh = () => {
+        setRefreshing(true);
+    };
+    
     return (
-        <ParallaxScrollView>
+        <ParallaxScrollView headerBackgroundColor={{ light: '#6A7666', dark: '#2B3035' }}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    tintColor="#C69D91"
+                    colors={["#C69D91"]}
+                />
+            }
+        >
             <ThemedView style={styles.titleContainer}>
                 <ThemedText type='title'
                     style={styles.titulo}>
