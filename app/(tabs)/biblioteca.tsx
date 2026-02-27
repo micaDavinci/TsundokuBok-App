@@ -25,7 +25,7 @@ export default function Biblioteca() {
         <ParallaxScrollView>
             <ThemedView style={styles.titleContainer}>
                 <ThemedText type="title"
-                    style={{ fontFamily: Fonts.rounded, }}>
+                    style={styles.titulo}>
                     Biblioteca
                 </ThemedText>
             </ThemedView>
@@ -54,11 +54,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
     },
+    titulo: {
+        color: '#E4DAC9',
+        marginBottom: 20,
+        fontWeight: 'bold',
+        fontFamily: Fonts.rounded
+    },
     fab: {
         position: 'absolute',
         margin: 16,
         right: 0,
         bottom: 0,
-        backgroundColor: '#E4DAC9',
+        backgroundColor: '#C69D91',
     }
 });

@@ -18,7 +18,7 @@ export default function wishList() {
         <ParallaxScrollView>
             <ThemedView style={styles.titleContainer}>
                 <ThemedText type="title"
-                    style={{ fontFamily: Fonts.rounded, }}>
+                    style={styles.titulo}>
                     Lista de deseos
                 </ThemedText>
             </ThemedView>
@@ -42,5 +42,11 @@ const styles = StyleSheet.create({
     titleContainer: {
         flexDirection: 'row',
         gap: 8,
+    },
+    titulo: {
+        color: '#E4DAC9',
+        marginBottom: 20,
+        fontWeight: 'bold',
+        fontFamily: Fonts.rounded
     }
 });

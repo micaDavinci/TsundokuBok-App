@@ -18,9 +18,9 @@ export const LibroDeseado = ({ id, titulo, autor, prioridad }: Props) => {
                     source={{ uri: 'https://tu-imagen.com' }}
                 />
                 <View>
-                    <Text variant="titleMedium" style={styles.titulo}>{titulo}</Text>
-                    <Text style={styles.subtitulo}>{autor}</Text>
-                    <Text style={styles.titulo}>Prioridad: {prioridad}</Text>
+                    <Text variant="titleLarge" style={styles.titulo}>{titulo}</Text>
+                    <Text variant='labelLarge' style={styles.autor}>{autor}</Text>
+                    <Text variant='labelLarge' style={styles.prioridad}>Prioridad: {prioridad}</Text>
                 </View>
             </Card.Content>
         </Card>
@@ -34,14 +34,18 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     card: {
-        margin: 4,
-        backgroundColor: "#2B3035"
+       margin: 4,
+        backgroundColor: "#2B3035",
+        marginBottom:12
     },
     titulo: {
         color: "#E4DAC9"
     },
-    subtitulo: {
+    autor:{
         color: "#6A7666",
-        paddingBottom: 16
+        paddingBottom: 16,
+    },
+    prioridad: {
+        color: "#C69D91",
     },
 });

@@ -19,10 +19,10 @@ export const LibroPrestado = ({ id, titulo, autor, persona, estado }: Props) => 
                     source={{ uri: 'https://tu-imagen.com' }}
                 />
                 <View>
-                    <Text variant="titleMedium" style={styles.titulo}>{titulo}</Text>
-                    <Text style={styles.subtitulo}>{autor}</Text>
-                    <Text variant="titleMedium"style={styles.titulo}>{persona}</Text>
-                    <Text style={styles.estado}>{estado}</Text>
+                    <Text variant="titleLarge" style={styles.titulo}>{titulo}</Text>
+                    <Text variant='labelLarge' style={styles.subtitulo}>{autor}</Text>
+                    <Text variant="titleLarge" style={styles.titulo}>{persona}</Text>
+                    <Text variant='labelLarge' style={styles.estado}>{estado}</Text>
                 </View>
             </Card.Content>
         </Card>
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
     },
     card: {
         margin: 4,
-        backgroundColor: "#2B3035"
+        backgroundColor: "#2B3035",
+        marginBottom:12
     },
     titulo: {
         color: "#E4DAC9"
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
     },
     estado: {
-        backgroundColor: '#808080',
+        color: "#C69D91",
         marginTop: 8,
     }
 });

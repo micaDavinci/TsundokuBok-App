@@ -26,7 +26,7 @@ export const Estante = ({ id, nombre, cantidad }: Props) => {
         >
             <Card style={styles.card} onPress={handlePress}>
                 <Card.Content>
-                    <Text variant='titleMedium' style={styles.titulo}>{nombre}</Text>
+                    <Text variant="titleLarge" style={styles.titulo}>{nombre}</Text>
                     <Text variant='labelLarge' style={styles.cantidad}>Cantidad: {cantidad}</Text>
                 </Card.Content>
             </Card>
@@ -36,13 +36,13 @@ export const Estante = ({ id, nombre, cantidad }: Props) => {
 
 const styles = StyleSheet.create({
     card: {
-        flexDirection: 'row',
         gap: 8,
         margin: 4,
         backgroundColor: "#2B3035"
     },
     titulo: {
-        color: "#E4DAC9"
+        color: "#E4DAC9",
+        marginBottom: 6
     },
     cantidad: {
         color: "#6A7666"

@@ -20,12 +20,28 @@ export default function nuevoLibro() {
         <ParallaxScrollView>
             <ThemedView>
                 <ThemedText type="title"
-                    style={{ fontFamily: Fonts.rounded, }}>
+                    style={styles.titulo}>
                     Nuevo libro
                 </ThemedText>
 
-                <Button mode="contained" style={styles.button} onPress={handleBusqueda}>Buscar</Button>
-                <Button mode="contained" style={styles.button} onPress={handleAltaManual}>Agregar manualmente</Button>
+                <Button 
+                mode="contained" 
+                style={styles.button} 
+                labelStyle={{ color: '#E4DAC9', fontWeight: 'bold', fontSize: 16 }}
+                onPress={handleBusqueda}
+                >
+                    Buscar
+                    </Button>
+
+                <Button 
+                mode="contained" 
+                style={styles.button}
+                labelStyle={{ color: '#E4DAC9', fontWeight: 'bold', fontSize: 16 }}
+                onPress={handleAltaManual}
+                >
+                    Agregar manualmente
+                    </Button>
+
             </ThemedView>
         </ParallaxScrollView>
     )
@@ -36,9 +52,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
     },
+    titulo: {
+        color: '#E4DAC9',
+        marginBottom: 32,
+        fontWeight: 'bold',
+        fontFamily: Fonts.rounded
+    },
     button: {
         color: "#E4DAC9",
         backgroundColor: "#6A7666",
-        margin: 8
+        margin: 16,
+        paddingTop: 16,
+        paddingBottom: 16,
+        borderRadius: 50,
     }
 });
