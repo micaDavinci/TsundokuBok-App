@@ -1,20 +1,11 @@
 import { api } from "@/api/api";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { useAuth } from "@/context/AuthContext";
-import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
 import { FAB, Text } from "react-native-paper";
 import { LibroPrestado } from "../prestamo/libroPrestado";
-
-const Prestamos = [
-    { id: 1, titulo: 'La selección', autor: 'Kiera Cass', persona: 'Popi', estado: 'prestado' },
-    { id: 2, titulo: 'La selección', autor: 'Kiera Cass', persona: 'Popi', estado: 'prestado' },
-    { id: 3, titulo: 'La selección', autor: 'Kiera Cass', persona: 'Popi', estado: 'prestado' },
-    { id: 4, titulo: 'La selección', autor: 'Kiera Cass', persona: 'Popi', estado: 'prestado' },
-
-];
-
 
 export default function prestamos() {
 
@@ -31,7 +22,15 @@ export default function prestamos() {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
-const getPrestamoList = async () => {
+    useFocusEffect(
+        useCallback(() => {
+            if (token) {
+                getPrestamoList();
+            }
+        }, [])
+    );
+
+    const getPrestamoList = async () => {
         try {
             const request = await api.get(`/prestamos`, {
                 headers: {
@@ -56,7 +55,7 @@ const getPrestamoList = async () => {
     const onRefresh = () => {
         setRefreshing(true);
     };
-    
+
     return (
         <>
             <Stack.Screen options={{ headerShown: false }} />
@@ -80,7 +79,7 @@ const getPrestamoList = async () => {
                 <View>
                     {prestamosList.length === 0 ? (
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
+                            <Text style={styles.emptyText}>No hay prestamos creados todavía</Text>
                             <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
                         </View>
                     ) : (
@@ -89,7 +88,7 @@ const getPrestamoList = async () => {
                         ))
                     )}
                 </View>
-                
+
 
             </ParallaxScrollView>
             <FAB
