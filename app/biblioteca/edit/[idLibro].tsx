@@ -1,6 +1,5 @@
 import { api } from "@/api/api";
 import { useAuth } from "@/context/AuthContext";
-import * as ImagePicker from 'expo-image-picker';
 import { Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -10,7 +9,6 @@ export default function editarLibro() {
     const { idLibro } = useLocalSearchParams();
     const { token } = useAuth();
     const navigate = useNavigation();
-    const [portada, setPortada] = useState(null);
     const [previewUrl, setPreviewUrl] = useState<any>(null);
 
     const [visible, setVisible] = useState(false);
@@ -73,18 +71,37 @@ export default function editarLibro() {
     }
 
     const handleEditar = async () => {
+        const form = new FormData();
+
+        const formatForMySQL = (dateString: string | null) => {
+            if (!dateString || dateString.length < 10) return null;
+            const [day, month, year] = dateString.split('-');
+            return `${year}-${month}-${day}`;
+        };
+
+        form.append('titulo', formData.titulo);
+        form.append('autor', formData.autor);
+        if (formData.formato) form.append('formato', formData.formato);
+        if (formData.opinion) form.append('opinion', formData.opinion);
+        if (formData.nota) form.append('nota', formData.nota);
+        if (formData.idioma) form.append('idioma', formData.idioma);
+        if (formData.genero) form.append('genero', formData.genero);
+        if (formData.sinopsis) form.append('sinopsis', formData.sinopsis);
+
+        if (formData.edicion && formData.edicion !== "") {
+            form.append('edicion', formData.edicion.toString());
+        }
+        if (formData.paginas && formData.paginas !== "") {
+            form.append('paginas', formData.paginas.toString());
+        }
+
+        const fechaInicioConv = formatForMySQL(formData.inicio);
+        const fechaFinConv = formatForMySQL(formData.fin);
+
+        if (fechaInicioConv) form.append('inicio', fechaInicioConv);
+        if (fechaFinConv) form.append('fin', fechaFinConv);
+
         try {
-            const form = new FormData();
-
-            Object.entries(formData).forEach(([key, value]) => {
-                form.append(key, value);
-            });
-
-            // if (portada) {
-            //     form.append('portada', portada);
-            // }
-
-            console.log("Enviando a ID:", idLibro);
             const request = await api.put(`/editar-libro/${idLibro}`, form, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -113,26 +130,17 @@ export default function editarLibro() {
         }));
     };
 
-    const handlePortadaChange = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [2, 3],
-            quality: 0.7,
-        });
+    const formatDateMask = (text: string) => {
+        const cleaned = text.replace(/\D/g, '');
 
-        if (!result.canceled) {
-            const selectedImage = result.assets[0];
-
-            setPortada({
-                uri: selectedImage.uri,
-                name: `portada_${Date.now()}.jpg`,
-                type: 'image/jpeg',
-            } as any);
-            setPreviewUrl(selectedImage.uri);
-        } else {
-            setPreviewUrl(null);
+        let formatted = cleaned;
+        if (cleaned.length > 2 && cleaned.length <= 4) {
+            formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(2)}`;
+        } else if (cleaned.length > 4) {
+            formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(2, 4)}-${cleaned.slice(4, 8)}`;
         }
+
+        return formatted;
     };
 
     return (
@@ -175,20 +183,6 @@ export default function editarLibro() {
                     style={styles.input}
                 />
 
-                {/* Selector de Portada mejorado */}
-                <View style={styles.portadaContainer}>
-                    {/* {previewUrl && (
-                        <Image source={{ uri: previewUrl }} style={styles.previewImage} />
-                    )} */}
-                    <Button
-                        icon="camera"
-                        mode="contained-tonal"
-                        onPress={handlePortadaChange}
-                        style={styles.imageButton}
-                    >
-                        {previewUrl ? 'Cambiar Portada' : 'Seleccionar Portada'}
-                    </Button>
-                </View>
             </View>
 
             {/* Acordeones */}
@@ -201,13 +195,15 @@ export default function editarLibro() {
                 >
                     <View style={styles.accordionBody}>
                         <Text style={styles.label}>Fecha de lectura (Inicio / Fin)</Text>
-                        {/* Aquí podrías usar un DateTimePicker nativo */}
                         <View style={styles.row}>
                             <TextInput
                                 label="Inicio"
-                                placeholder="AAAA-MM-DD"
+                                placeholder="DD-MM-AAAA"
                                 value={formData.inicio}
-                                onChangeText={(val) => handleChange('inicio', val)}
+                                onChangeText={(val) => {
+                                    const masked = formatDateMask(val);
+                                    handleChange('inicio', masked);
+                                }}
                                 mode="flat"
                                 outlineColor="#E4DAC9"
                                 activeOutlineColor="#E4DAC9"
@@ -222,9 +218,13 @@ export default function editarLibro() {
                             />
                             <TextInput
                                 label="Fin"
-                                placeholder="AAAA-MM-DD"
+                                placeholder="DD-MM-AAAA"
                                 value={formData.fin}
-                                onChangeText={(val) => handleChange('fin', val)}
+
+                                onChangeText={(val) => {
+                                    const masked = formatDateMask(val);
+                                    handleChange('fin', masked);
+                                }}
                                 mode="flat"
                                 outlineColor="#E4DAC9"
                                 activeOutlineColor="#E4DAC9"
@@ -433,10 +433,6 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         color: '#666',
         fontSize: 14
-    },
-    portadaContainer: {
-        alignItems: 'center',
-        marginVertical: 10
     },
     previewImage: {
         width: 100,
