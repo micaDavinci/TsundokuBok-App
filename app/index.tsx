@@ -46,6 +46,7 @@ export default function Login() {
             mode="outlined"
             outlineColor="#E4DAC9"
             activeOutlineColor="#E4DAC9"
+            textColor="#E4DAC9"
             style={styles.input}
             onChangeText={setEmail}
             theme={{
@@ -62,6 +63,7 @@ export default function Login() {
             mode="outlined"
             outlineColor="#E4DAC9"
             activeOutlineColor="#E4DAC9"
+            textColor="#E4DAC9"
             style={styles.input}
             onChangeText={setBiblioteca}
             theme={{
@@ -78,6 +80,7 @@ export default function Login() {
             mode="outlined"
             outlineColor="#E4DAC9"
             activeOutlineColor="#E4DAC9"
+            textColor="#E4DAC9"
             style={styles.input}
             onChangeText={setContrasena}
             theme={{
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: 8,
-    backgroundColor: "#E4DAC9"
+    backgroundColor: "#2B3035"
   },
   button: {
     backgroundColor: "#6A7666",

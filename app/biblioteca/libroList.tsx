@@ -25,6 +25,7 @@ export const LibroList = ({ libro }: Props) => {
     const [estantes, setEstantes] = React.useState([]);
     const [idLibro, setIdLibro] = React.useState("");
     const [estanteDestino, setEstanteDestino] = React.useState("");
+    const [menuVisible, setMenuVisible] = React.useState(false);
     const [show, setShow] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [refreshing, setRefreshing] = React.useState(false);
@@ -144,6 +145,8 @@ export const LibroList = ({ libro }: Props) => {
                             <Text style={styles.badgeText}>{libro.estado}</Text>
                         </View>
                     </View>
+
+                    
                 </Card.Content>
             </Card>
         </TouchableRipple>

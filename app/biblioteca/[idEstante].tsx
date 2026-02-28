@@ -83,7 +83,7 @@ export default function estante() {
                 <View style={styles.listContainer}>
                     {estanteList.length === 0 ? (
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
+                            <Text style={styles.emptyText}>Todavía no se han guardado libros en este estante</Text>
                             <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
                         </View>
                     ) : (
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
         color: '#E4DAC9',
         fontSize: 18,
         opacity: 0.8,
+        alignItems: 'center',
     },
     emptySub: {
         color: '#C69D91',

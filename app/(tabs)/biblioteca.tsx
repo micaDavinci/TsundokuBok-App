@@ -89,7 +89,7 @@ export default function Biblioteca() {
                     />
                 </View>
 
-                <View style={styles.listContainer}>
+                <View>
                     {estantes.length === 0 ? (
                         <View style={styles.emptyContainer}>
                             <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
@@ -101,7 +101,7 @@ export default function Biblioteca() {
                         ))
                     )}
                 </View>
-                <View style={{ height: 80 }} />
+                
 
             </ParallaxScrollView>
             <FAB
@@ -130,9 +130,6 @@ const styles = StyleSheet.create({
     logoutBtn: {
         borderColor: '#C69D91',
         borderRadius: 12,
-    },
-    listContainer: {
-
     },
     emptyContainer: {
         marginTop: 40,

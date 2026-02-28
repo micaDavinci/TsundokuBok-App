@@ -1,68 +1,94 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
-import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet } from "react-native";
-import { Button } from "react-native-paper";
+import { Stack, useRouter } from 'expo-router';
+import { StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 
 export default function nuevoLibro() {
+
     const router = useRouter();
 
     const handleAltaManual = () => {
-        router.push('/nuevo/altaManual');
+        router.push('/nuevo/agregarLibro');
     }
     const handleBusqueda = () => {
         router.push('/nuevo/busqueda');
     }
 
     return (
-        <ScrollView>
-            <ThemedView>
-                <ThemedText type="title"
-                    style={styles.titulo}>
+<View style={styles.mainContainer}>
+            <Stack.Screen options={{ headerShown: false }} />
+
+            <View style={styles.content}>
+                <Text variant="displaySmall" style={styles.titulo}>
                     Nuevo libro
-                </ThemedText>
+                </Text>
 
-                <Button 
-                mode="contained" 
-                style={styles.button} 
-                labelStyle={{ color: '#E4DAC9', fontWeight: 'bold', fontSize: 16 }}
-                onPress={handleBusqueda}
-                >
-                    Buscar
+                <Text style={styles.subtitulo}>
+                    ¿Cómo desias añadir tu próximo libro?
+                </Text>
+
+                <View style={styles.buttonContainer}>
+                    <Button 
+                        mode="contained" 
+                        icon="magnify"
+                        style={styles.button} 
+                        labelStyle={styles.buttonLabel}
+                        onPress={handleBusqueda}
+                    >
+                        Buscar por título o autor
                     </Button>
 
-                <Button 
-                mode="contained" 
-                style={styles.button}
-                labelStyle={{ color: '#E4DAC9', fontWeight: 'bold', fontSize: 16 }}
-                onPress={handleAltaManual}
-                >
-                    Agregar manualmente
+                    <Button 
+                        mode="outlined"
+                        icon="pencil"
+                        style={[styles.button, styles.buttonManual]} 
+                        labelStyle={[styles.buttonLabel, { color: '#C69D91' }]}
+                        onPress={handleAltaManual}
+                    >
+                        Agregar manualmente
                     </Button>
+                </View>
+            </View>
+        </View>
 
-            </ThemedView>
-        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        flexDirection: 'row',
-        gap: 8,
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#151718',
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 24,
+        paddingTop: 60,
     },
     titulo: {
         color: '#E4DAC9',
-        marginBottom: 32,
         fontWeight: 'bold',
-        fontFamily: Fonts.rounded
+        marginBottom: 8,
+    },
+    subtitulo: {
+        color: '#6A7666',
+        fontSize: 16,
+        marginBottom: 40,
+    },
+    buttonContainer: {
+        gap: 16,
     },
     button: {
-        color: "#E4DAC9",
-        backgroundColor: "#6A7666",
-        margin: 16,
-        paddingTop: 16,
-        paddingBottom: 16,
-        borderRadius: 50,
-    }
+        paddingVertical: 6,
+        borderRadius: 12,
+        backgroundColor: '#6A7666',
+    },
+    buttonManual: {
+        backgroundColor: 'transparent',
+        borderColor: '#C69D91',
+        borderWidth: 1,
+    },
+    buttonLabel: {
+        color: '#E4DAC9',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
 });

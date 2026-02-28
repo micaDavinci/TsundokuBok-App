@@ -1,7 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Card, Text } from 'react-native-paper';
+import { Image, StyleSheet, View } from 'react-native';
+import { Card, Text, TouchableRipple } from 'react-native-paper';
 
 type BookType = {
   id: number,
@@ -19,21 +18,21 @@ type Props = {
 };
 
 const Resultado = ({ book } : Props) => {
-  const navigation = useNavigation();
   const { id, volumeInfo } = book;
   const { title, authors, imageLinks } = volumeInfo;
 
   return (
-    <TouchableOpacity 
-      style={styles.cardWrapper}
-    //   onPress={() => navigation.navigate('AgregarLibro', { id })}
-    >
+    <TouchableRipple
+            rippleColor="rgba(198, 157, 145, 0.2)"
+        >
+
+          
       <Card style={styles.card}>
         {/* Imagen del Libro */}
         <View style={styles.imageContainer}>
           <Image
             source={{ 
-              uri: imageLinks?.thumbnail?.replace('http:', 'https:') 
+              uri: imageLinks?.thumbnail
             }}
             style={styles.image}
             resizeMode="contain"
@@ -49,7 +48,34 @@ const Resultado = ({ book } : Props) => {
           </Text>
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+
+
+{/* <Card style={styles.card}>
+                <Card.Content style={styles.contentRow}>
+                    <Image
+                        style={styles.portada}
+                        source={{
+                            uri: libro.portada
+                                ? `${server}/uploads/portadas/${libro.portada}`
+                                : libro.portadaGoogle
+                                    ? libro.portadaGoogle
+                                    : `${server}/uploads/portadas/default-cover.jpg`
+                        }
+                        }
+                    />
+                    <View>
+                        <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
+                        <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{libro.estado}</Text>
+                        </View>
+                    </View>
+
+                    
+                </Card.Content>
+            </Card> */}
+
+    </TouchableRipple>
   );
 };
 
