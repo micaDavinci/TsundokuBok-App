@@ -23,7 +23,7 @@ export default function nuevoLibro() {
                 </Text>
 
                 <Text style={styles.subtitulo}>
-                    ¿Cómo desias añadir tu próximo libro?
+                    ¿Cómo deseas añadir tu próximo libro?
                 </Text>
 
                 <View style={styles.buttonContainer}>

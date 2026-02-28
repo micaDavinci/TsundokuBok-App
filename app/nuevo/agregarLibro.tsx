@@ -1,5 +1,6 @@
 import { api } from "@/api/api";
 import { useAuth } from "@/context/AuthContext";
+import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { router, Stack, useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useState } from "react";
@@ -132,14 +133,8 @@ export default function agregarLibro() {
         if (paginas && paginas.toString().trim() !== "") {
             formData.append('paginas', paginas.toString());
         }
-        // formData.append('portadaGoogle', portadaGoogle || "");
-        formData.append('id_ubicacion', "4");
-        // formData.append('prioridad', destino === "2" ? segundoValor : "");
-
-        // if (portadaFile) {
-        //     // @ts-ignore (FormData en RN pide este formato de objeto)
-        //     formData.append('portada', portadaFile);
-        // }
+        formData.append('id_ubicacion', destino === "1" ? segundoValor : "");
+        formData.append('prioridad', destino === "2" ? segundoValor : "");
 
         try {
             const request = await api.post(`/nuevo-libro`, formData, {
@@ -164,9 +159,9 @@ export default function agregarLibro() {
             console.log(request.data.message)
 
         } catch (error: any) {
-        console.error("Error completo", error);
-        const errorMsg = error.response?.data?.message || "Ocurrió un error inesperado";
-        Alert.alert("Error", errorMsg);
+            console.error("Error completo", error);
+            const errorMsg = error.response?.data?.message || "Ocurrió un error inesperado";
+            Alert.alert("Error", errorMsg);
         }
     }
 
@@ -227,7 +222,7 @@ export default function agregarLibro() {
                     textColor="#E4DAC9"
                 />
 
-                <TextInput
+                                <TextInput
                     label="Autor/a"
                     value={autor}
                     onChangeText={setAutor}
@@ -237,6 +232,54 @@ export default function agregarLibro() {
                     activeOutlineColor="#C69D91"
                     textColor="#E4DAC9"
                 />
+
+                <View style={styles.row}>
+                    {/* Columna 1: Destino */}
+                    <View style={styles.col}>
+                        <Text style={styles.label}>Agregar a</Text>
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={destino}
+                                onValueChange={(itemValue) => setDestino(itemValue)}
+                                dropdownIconColor="#2B3035"
+                            >
+                                <Picker.Item label="[Seleccione]" value="" color="#E4DAC9" />
+                                <Picker.Item label="Biblioteca" value="1" color="#2B3035" />
+                                <Picker.Item label="Lista de deseos" value="2" color="#2B3035" />
+                            </Picker>
+                        </View>
+                    </View>
+
+                    {/* Ubicación o prioridad */}
+                    <View style={styles.col}>
+                        <Text style={styles.label}>
+                            {destino === "2" ? "Prioridad" : "Ubicación"}
+                        </Text>
+                        <View style={[
+                            styles.pickerWrapper,
+                            (destino !== "1" && destino !== "2") && styles.disabled
+                        ]}>
+                            <Picker
+                                selectedValue={segundoValor}
+                                enabled={destino === "1" || destino === "2"}
+                                onValueChange={(itemValue) => setSegundoValor(itemValue)}
+                                dropdownIconColor="#2B3035"
+
+                            >
+                                <Picker.Item label="[Seleccione]" value="" color="#E4DAC9" />
+                                {opcionesSegundoCombo.map((opcion) => (
+                                    <Picker.Item
+                                        key={opcion.id_estante ?? opcion.id}
+                                        label={opcion.nombre}
+                                        value={(opcion.id_estante ?? opcion.id).toString()}
+                                        color="#2B3035"
+                                    />
+                                ))}
+                            </Picker>
+                        </View>
+                    </View>
+                </View>
+
 
 
                 {/* Datos Técnicos en Fila */}
@@ -249,8 +292,8 @@ export default function agregarLibro() {
                         mode="outlined"
                         style={[styles.input, styles.flex1, { marginRight: 8 }]}
                         outlineColor="#6A7666"
-                    activeOutlineColor="#C69D91"
-                    textColor="#E4DAC9"
+                        activeOutlineColor="#C69D91"
+                        textColor="#E4DAC9"
                     />
                     <TextInput
                         label="Páginas"
@@ -260,8 +303,8 @@ export default function agregarLibro() {
                         mode="outlined"
                         style={[styles.input, styles.flex1]}
                         outlineColor="#6A7666"
-                    activeOutlineColor="#C69D91"
-                    textColor="#E4DAC9"
+                        activeOutlineColor="#C69D91"
+                        textColor="#E4DAC9"
                     />
                 </View >
 
@@ -358,6 +401,10 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         gap: 10,
     },
+    col: {
+        flex: 1,
+        marginHorizontal: 5,
+    },
     flex1: {
         flex: 1,
     },
@@ -370,16 +417,17 @@ const styles = StyleSheet.create({
     },
     pickerWrapper: {
         borderWidth: 1,
-        borderColor: '#6A7666',
+        borderColor: '#E4DAC9',
         borderRadius: 5,
         backgroundColor: '#151718',
         height: 50,
         justifyContent: 'center',
+        overflow: 'hidden',
     },
     picker: {
         color: '#E4DAC9',
     },
-    disabledPicker: {
+    disabled: {
         opacity: 0.5,
         backgroundColor: '#1a1d21',
     },
