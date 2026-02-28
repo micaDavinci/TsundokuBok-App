@@ -77,6 +77,7 @@ export default function Login() {
           <TextInput
             label="Contraseña"
             value={contrasena}
+            secureTextEntry={true}
             mode="outlined"
             outlineColor="#E4DAC9"
             activeOutlineColor="#E4DAC9"

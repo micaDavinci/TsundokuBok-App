@@ -9,9 +9,7 @@ export default function nuevoLibro() {
     const handleAltaManual = () => {
         router.push('/nuevo/agregarLibro');
     }
-    const handleBusqueda = () => {
-        router.push('/nuevo/busqueda');
-    }
+
 
     return (
 <View style={styles.mainContainer}>
@@ -22,21 +20,7 @@ export default function nuevoLibro() {
                     Nuevo libro
                 </Text>
 
-                <Text style={styles.subtitulo}>
-                    ¿Cómo deseas añadir tu próximo libro?
-                </Text>
-
                 <View style={styles.buttonContainer}>
-                    <Button 
-                        mode="contained" 
-                        icon="magnify"
-                        style={styles.button} 
-                        labelStyle={styles.buttonLabel}
-                        onPress={handleBusqueda}
-                    >
-                        Buscar por título o autor
-                    </Button>
-
                     <Button 
                         mode="outlined"
                         icon="pencil"
@@ -66,25 +50,21 @@ const styles = StyleSheet.create({
     titulo: {
         color: '#E4DAC9',
         fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    subtitulo: {
-        color: '#6A7666',
-        fontSize: 16,
         marginBottom: 40,
     },
     buttonContainer: {
         gap: 16,
     },
     button: {
-        paddingVertical: 6,
+        paddingVertical: 10,
         borderRadius: 12,
         backgroundColor: '#6A7666',
+        
     },
     buttonManual: {
         backgroundColor: 'transparent',
         borderColor: '#C69D91',
-        borderWidth: 1,
+        borderWidth: 40,
     },
     buttonLabel: {
         color: '#E4DAC9',
