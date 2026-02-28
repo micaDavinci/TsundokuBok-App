@@ -13,7 +13,7 @@ type Props = {
   estante: EstanteType;
 };
 
-export const Estante = ( {estante} : Props ) => {
+export const EstanteList = ( {estante} : Props ) => {
     const router = useRouter();
     return (
         <TouchableRipple

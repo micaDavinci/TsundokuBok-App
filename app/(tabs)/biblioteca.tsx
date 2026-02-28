@@ -6,7 +6,7 @@ import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
 import { FAB, IconButton, Text } from "react-native-paper";
-import { Estante } from "../biblioteca/estante";
+import { EstanteList } from "../biblioteca/estanteList";
 
 export default function Biblioteca() {
     const { token } = useAuth();
@@ -17,7 +17,9 @@ export default function Biblioteca() {
 
     useFocusEffect(
         useCallback(() => {
-            getEstantes();
+            if (token) {
+                getEstantes();
+            }
         }, [])
     );
 
@@ -95,7 +97,7 @@ export default function Biblioteca() {
                         </View>
                     ) : (
                         estantes.map((estante) => (
-                            <Estante estante={estante} />
+                            <EstanteList estante={estante} />
                         ))
                     )}
                 </View>
