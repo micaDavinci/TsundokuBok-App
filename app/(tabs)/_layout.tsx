@@ -5,7 +5,6 @@ import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -18,7 +17,7 @@ export default function TabLayout() {
   if (loading) return null;
 
   if (!logueado) {
-    return <Redirect href='../index' />;
+    return <Redirect href='/login' />;
   }
 
   return (
@@ -28,17 +27,9 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
       } 
-      }>
+      }>   
       <Tabs.Screen
         name="index"
-        options={{
-          title: 'Logout',
-          tabBarIcon: ({ color }) => <Entypo name="log-out" size={28} color={color} />,
-        }}
-      />
-      
-      <Tabs.Screen
-        name="biblioteca"
         options={{
           title: 'Biblioteca',
           tabBarIcon: ({ color }) => <MaterialCommunityIcons size={28} name="book-open-blank-variant" color={color} />,

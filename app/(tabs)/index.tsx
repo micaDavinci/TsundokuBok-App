@@ -53,6 +53,7 @@ export default function Biblioteca() {
 
     const handleLogout = async () => {
         await logout();
+        router.push('/login');
     }
 
     const onRefresh = () => {

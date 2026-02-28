@@ -120,35 +120,46 @@ export const LibroList = ({ libro }: Props) => {
         }
 
     }
+    const onRefresh = () => {
+        setRefreshing(true);
+        getEstantes();
+    };
+
+    const handlePress = () => {
+        // Navegación manual
+        router.push(`/biblioteca/libro/${libro.id_libro}`);
+    };
 
     return (
         <TouchableRipple
+            onPress={handlePress} // <--- Manejamos el clic aquí
             rippleColor="rgba(198, 157, 145, 0.2)"
+            style={styles.ripple}
         >
-            <Card style={styles.card}>
-                <Card.Content style={styles.contentRow}>
-                    <Image
-                        style={styles.portada}
-                        source={{
-                            uri: libro.portada
-                                ? `${server}/uploads/portadas/${libro.portada}`
-                                : libro.portadaGoogle
-                                    ? libro.portadaGoogle
-                                    : `${server}/uploads/portadas/default-cover.jpg`
-                        }
-                        }
-                    />
-                    <View>
-                        <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
-                        <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
-                        <View style={styles.badge}>
-                            <Text style={styles.badgeText}>{libro.estado}</Text>
+                <Card style={styles.card}>
+                    <Card.Content style={styles.contentRow}>
+                        <Image
+                            style={styles.portada}
+                            source={{
+                                uri: libro.portada
+                                    ? `${server}/uploads/portadas/${libro.portada}`
+                                    : libro.portadaGoogle
+                                        ? libro.portadaGoogle
+                                        : `${server}/uploads/portadas/default-cover.jpg`
+                            }
+                            }
+                        />
+                        <View>
+                            <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
+                            <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
+                            <View style={styles.badge}>
+                                <Text style={styles.badgeText}>{libro.estado}</Text>
+                            </View>
                         </View>
-                    </View>
 
-                    
-                </Card.Content>
-            </Card>
+
+                    </Card.Content>
+                </Card>
         </TouchableRipple>
     )
 };

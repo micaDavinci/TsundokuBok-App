@@ -11,7 +11,7 @@ import { LibroList } from "./libroList";
 
 
 export default function estante() {
-    const { id_libro } = useLocalSearchParams();
+    const { idEstante } = useLocalSearchParams();
     const { token } = useAuth();
 
     const [estanteNombre, setEstanteNombre] = useState("");
@@ -33,7 +33,7 @@ export default function estante() {
     const getEstanteList = async () => {
         setLoading(true);
         try {
-            const request = await api.get(`/librosList/${id_libro}`,
+            const request = await api.get(`/librosList/${idEstante}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -42,6 +42,7 @@ export default function estante() {
             );
             if (request.data.success) {
                 setEstanteList(request.data.result);
+                getEstanteNombre();
             } else {
                 Alert.alert("Error", request.data.message);
             }
@@ -52,6 +53,25 @@ export default function estante() {
         } finally {
             setLoading(false);
             setRefreshing(false);
+        }
+    }
+
+    const getEstanteNombre = async () => {
+        try {
+            const request = await api.get(`/recuperar-estante/${idEstante}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            if (request.data.success) {
+                setEstanteNombre(request.data.result.nombre);
+            } else {
+                alert(request.data.message);
+            }
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -76,7 +96,7 @@ export default function estante() {
             >
                 <View style={styles.headerRow}>
                     <Text variant="displaySmall" style={styles.titulo}>
-                        Estante nombre
+                        {estanteNombre}
                     </Text>
                 </View>
 

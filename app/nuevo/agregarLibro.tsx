@@ -1,10 +1,9 @@
 import { api } from "@/api/api";
 import { useAuth } from "@/context/AuthContext";
-import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { router, Stack, useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 
 
@@ -122,19 +121,19 @@ export default function agregarLibro() {
         const formData = new FormData();
         formData.append('titulo', titulo);
         formData.append('autor', autor);
-        formData.append('edicion', edicion);
-        formData.append('paginas', paginas.toString());
-        formData.append('idioma', idioma);
-        formData.append('sinopsis', sinopsis);
-        formData.append('genero', genero);
-        formData.append('portadaGoogle', portadaGoogle || "");
-        formData.append('id_ubicacion', destino === "1" ? segundoValor : "");
-        formData.append('prioridad', destino === "2" ? segundoValor : "");
+        // formData.append('edicion', edicion);
+        // formData.append('paginas', paginas.toString());
+        // formData.append('idioma', idioma);
+        // formData.append('sinopsis', sinopsis);
+        // formData.append('genero', genero);
+        // formData.append('portadaGoogle', portadaGoogle || "");
+        formData.append('id_ubicacion', "5");
+        // formData.append('prioridad', destino === "2" ? segundoValor : "");
 
-        if (portadaFile) {
-            // @ts-ignore (FormData en RN pide este formato de objeto)
-            formData.append('portada', portadaFile);
-        }
+        // if (portadaFile) {
+        //     // @ts-ignore (FormData en RN pide este formato de objeto)
+        //     formData.append('portada', portadaFile);
+        // }
 
         try {
             const request = await api.post(`/nuevo-libro`, formData, {
@@ -144,18 +143,20 @@ export default function agregarLibro() {
                 }
             });
 
-
+            console.log(formData)
             if (request.data.success) {
                 setMensaje("¡Estante creado con éxito!");
                 setVisible(true);
 
                 setTimeout(() => {
                     router.back();
-                }, 1500);
+                }, 1000);
 
             } else {
                 Alert.alert("Error", request.data.message);
             }
+            console.log(request.data.message)
+
         } catch (error: any) {
             console.error("Error completo", error);
             setMensaje(error.response?.data?.message);
@@ -208,26 +209,6 @@ export default function agregarLibro() {
             <ScrollView style={styles.mainContainer} contentContainerStyle={styles.scrollContent}>
                 <Text variant="headlineMedium" style={styles.tituloHeader}>Nuevo Libro</Text>
 
-                {/* Sección de Portada */}
-                <View style={styles.portadaContainer}>
-                    {previewUrl ? (
-                        // <Image source={{uri: previewUrl }} style={styles.previewImage} />
-                        <Image />
-                    ) : (
-                        <View style={[styles.previewImage, styles.placeholderImage]}>
-                            <Text style={{ color: '#6A7666' }}>Sin Portada</Text>
-                        </View>
-                    )}
-                    <Button
-                        //   mode="outlined" 
-                        //   onPress={handlePortadaChange} 
-                        //   style={styles.buttonFile}
-                        textColor="#C69D91"
-                    >
-                        Seleccionar Imagen
-                    </Button>
-                </View>
-
                 {/* Inputs Principales */}
                 <TextInput
                     label="Título"
@@ -251,51 +232,9 @@ export default function agregarLibro() {
                     textColor="#E4DAC9"
                 />
 
-                {/* Selectores (Destino y Ubicación/Prioridad) */}
-                <View style={styles.row}>
-                    <View style={styles.flex1}>
-                        <Text style={styles.label}>Agregar a</Text>
-                        <View style={styles.pickerWrapper}>
-                            <Picker
-                                selectedValue={destino}
-                                onValueChange={(itemValue) => setDestino(itemValue)}
-                                style={styles.picker}
-                                dropdownIconColor="#E4DAC9"
-                            >
-                                <Picker.Item label="Seleccione" value="" />
-                                <Picker.Item label="Biblioteca" value="1" />
-                                <Picker.Item label="Lista de deseos" value="2" />
-                            </Picker>
-                        </View>
-                    </View>
 
-                    <View style={styles.flex1}>
-                        <Text style={styles.label}>
-                            {destino === "2" ? "Prioridad" : "Ubicación"}
-                        </Text>
-                        <View style={[styles.pickerWrapper, destino === "" && styles.disabledPicker]}>
-                            <Picker
-                                selectedValue={segundoValor}
-                                enabled={destino !== ""}
-                                onValueChange={(itemValue) => setSegundoValor(itemValue)}
-                                style={styles.picker}
-                                dropdownIconColor="#E4DAC9"
-                            >
-                                <Picker.Item label="Seleccione" value="" />
-                                {opcionesSegundoCombo.map((opcion) => (
-                                    <Picker.Item
-                                        key={opcion.id_estante ?? opcion.id}
-                                        label={opcion.nombre}
-                                        value={opcion.id_estante ?? opcion.id}
-                                    />
-                                ))}
-                            </Picker>
-                        </View>
-                    </View>
-                </View>
-
-                {/* Datos Técnicos en Fila */}
-                <View style={styles.row}>
+            {/* Datos Técnicos en Fila */ }
+            {/* < View style = { styles.row } >
                     <TextInput
                         label="Año"
                         value={edicion}
@@ -312,7 +251,7 @@ export default function agregarLibro() {
                         mode="outlined"
                         style={[styles.input, styles.flex1]}
                     />
-                </View>
+                </View >
 
                 <TextInput
                     label="Idioma"
@@ -338,7 +277,7 @@ export default function agregarLibro() {
                     multiline
                     numberOfLines={6}
                     style={[styles.input, styles.textArea]}
-                />
+                /> */}
 
                 <Button
                     mode="contained"
@@ -348,7 +287,7 @@ export default function agregarLibro() {
                 >
                     Guardar Libro
                 </Button>
-            </ScrollView>
+            </ScrollView >
         </>
     )
 }
