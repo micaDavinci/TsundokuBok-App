@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import * as ImagePicker from 'expo-image-picker';
 import { router, Stack, useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Alert, ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 
 
@@ -121,13 +121,19 @@ export default function agregarLibro() {
         const formData = new FormData();
         formData.append('titulo', titulo);
         formData.append('autor', autor);
-        // formData.append('edicion', edicion);
-        // formData.append('paginas', paginas.toString());
-        // formData.append('idioma', idioma);
-        // formData.append('sinopsis', sinopsis);
-        // formData.append('genero', genero);
+        formData.append('idioma', idioma);
+        formData.append('sinopsis', sinopsis);
+        formData.append('genero', genero);
+
+        if (edicion && edicion.toString().trim() !== "") {
+            formData.append('edicion', edicion.toString());
+        }
+
+        if (paginas && paginas.toString().trim() !== "") {
+            formData.append('paginas', paginas.toString());
+        }
         // formData.append('portadaGoogle', portadaGoogle || "");
-        formData.append('id_ubicacion', "5");
+        formData.append('id_ubicacion', "4");
         // formData.append('prioridad', destino === "2" ? segundoValor : "");
 
         // if (portadaFile) {
@@ -145,7 +151,7 @@ export default function agregarLibro() {
 
             console.log(formData)
             if (request.data.success) {
-                setMensaje("¡Estante creado con éxito!");
+                setMensaje("Libro guardado con éxito!");
                 setVisible(true);
 
                 setTimeout(() => {
@@ -158,9 +164,9 @@ export default function agregarLibro() {
             console.log(request.data.message)
 
         } catch (error: any) {
-            console.error("Error completo", error);
-            setMensaje(error.response?.data?.message);
-            Alert.alert("Error", mensaje);
+        console.error("Error completo", error);
+        const errorMsg = error.response?.data?.message || "Ocurrió un error inesperado";
+        Alert.alert("Error", errorMsg);
         }
     }
 
@@ -216,7 +222,7 @@ export default function agregarLibro() {
                     onChangeText={seTtitulo}
                     mode="outlined"
                     style={styles.input}
-                    outlineColor="#6A7666"
+                    outlineColor="#E4DAC9"
                     activeOutlineColor="#C69D91"
                     textColor="#E4DAC9"
                 />
@@ -227,14 +233,14 @@ export default function agregarLibro() {
                     onChangeText={setAutor}
                     mode="outlined"
                     style={styles.input}
-                    outlineColor="#6A7666"
+                    outlineColor="#E4DAC9"
                     activeOutlineColor="#C69D91"
                     textColor="#E4DAC9"
                 />
 
 
-            {/* Datos Técnicos en Fila */ }
-            {/* < View style = { styles.row } >
+                {/* Datos Técnicos en Fila */}
+                < View style={styles.row} >
                     <TextInput
                         label="Año"
                         value={edicion}
@@ -242,6 +248,9 @@ export default function agregarLibro() {
                         keyboardType="numeric"
                         mode="outlined"
                         style={[styles.input, styles.flex1, { marginRight: 8 }]}
+                        outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
                     />
                     <TextInput
                         label="Páginas"
@@ -250,6 +259,9 @@ export default function agregarLibro() {
                         keyboardType="numeric"
                         mode="outlined"
                         style={[styles.input, styles.flex1]}
+                        outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
                     />
                 </View >
 
@@ -259,6 +271,9 @@ export default function agregarLibro() {
                     onChangeText={setIdioma}
                     mode="outlined"
                     style={styles.input}
+                    outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
                 />
 
                 <TextInput
@@ -267,6 +282,9 @@ export default function agregarLibro() {
                     onChangeText={setGenero}
                     mode="outlined"
                     style={styles.input}
+                    outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
                 />
 
                 <TextInput
@@ -277,7 +295,10 @@ export default function agregarLibro() {
                     multiline
                     numberOfLines={6}
                     style={[styles.input, styles.textArea]}
-                /> */}
+                    outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
+                />
 
                 <Button
                     mode="contained"

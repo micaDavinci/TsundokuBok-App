@@ -22,7 +22,7 @@ export default function Login() {
 
       if (request.data.success) {
         login(request.data);
-        router.replace('/(tabs)/index');
+        router.replace('/(tabs)');
       } else {
         Alert.alert(request.data.message);
       }
