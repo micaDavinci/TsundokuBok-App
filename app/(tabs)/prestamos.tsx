@@ -1,64 +1,59 @@
-
 import { api } from "@/api/api";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { useAuth } from "@/context/AuthContext";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
-import { FAB, IconButton, Text } from "react-native-paper";
-import { EstanteList } from "../biblioteca/estanteList";
+import { Text } from "react-native-paper";
+import { LibroPrestado } from "../prestamo/libroPrestado";
 
-export default function Biblioteca() {
+export default function prestamos() {
+
+    const [show, setShow] = useState(false);
+
     const { token } = useAuth();
-    const [estantes, setEstantes] = useState([]);
+    const [prestamosList, setPrestamosList] = useState([]);
+    const [librosDisponibles, setLibrosDisponibles] = useState([]);
+    const [persona, setPersona] = useState("");
+    const [libro, setLibro] = useState("");
+    const [fechaPrestamo, setFechaPrestamo] = useState("");
+
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const { logout } = useAuth();
 
     useFocusEffect(
         useCallback(() => {
             if (token) {
-                getEstantes();
+                getPrestamoList();
             }
         }, [])
     );
 
-    const getEstantes = async () => {
-        setLoading(true);
+    const getPrestamoList = async () => {
         try {
-            const request = await api.get("/estantes", {
+            const request = await api.get(`/prestamos`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             if (request.data.success) {
-                setEstantes(request.data.result);
+                setPrestamosList(request.data.result);
             } else {
-                Alert.alert("Error", request.data.message);
+                Alert.alert(request.data.message);
             }
-        } catch (error: any) {
-            console.error("Error completo", error);
-            const mensaje = error.response?.data?.message
-            Alert.alert("Error", mensaje);
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "Ha surgido un error, por favor intente más tarde");
         }
-    };
-
-    const router = useRouter();
-    const handleNuevo = () => {
-        router.push('/biblioteca/nuevoEstante');
     }
 
-    const handleLogout = async () => {
-        await logout();
-        router.push('/login');
+    const handleNuevo = () => {
+        router.push('/prestamo/nuevoPrestamo');
     }
 
     const onRefresh = () => {
         setRefreshing(true);
-        getEstantes();
     };
 
     return (
@@ -77,42 +72,32 @@ export default function Biblioteca() {
             >
                 <View style={styles.headerRow}>
                     <Text variant="displaySmall" style={styles.titulo}>
-                        Biblioteca
+                        Préstamos
                     </Text>
-
-                    <IconButton
-                        icon="logout"
-                        mode="outlined"
-                        iconColor="#C69D91"
-                        size={24}
-                        onPress={handleLogout}
-                        style={styles.logoutBtn}
-                    />
                 </View>
+                <View style={styles.headerRow}>
+                                    <Text style={styles.aclaracionText}>La gestión de préstamos se realiza desde la página web</Text>
+                                </View>
 
                 <View>
-                    {estantes.length === 0 ? (
+                    {prestamosList.length === 0 ? (
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
+                            <Text style={styles.emptyText}>No hay préstamos creados todavía</Text>
                             <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
                         </View>
                     ) : (
-                        estantes.map((estante) => (
-                            <EstanteList estante={estante} />
+                        prestamosList.map((prestamo) => (
+                            <LibroPrestado prestamo={prestamo} />
                         ))
                     )}
                 </View>
-                
+
 
             </ParallaxScrollView>
-            <FAB
-                icon="plus"
-                size='medium'
-                style={styles.fab}
-                onPress={handleNuevo}
-            >
-            </FAB>
         </>
+
+
+
     )
 }
 
@@ -146,12 +131,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 8,
     },
-    fab: {
-        position: 'absolute',
-        margin: 20,
-        right: 0,
-        bottom: 0,
-        backgroundColor: '#C69D91',
-        borderRadius: 50,
+    aclaracionText: {
+        color: '#6A7666',
+        fontSize: 14,
+        opacity: 0.8,
     },
 });

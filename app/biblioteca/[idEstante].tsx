@@ -2,37 +2,47 @@
 import { api } from "@/api/api";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { useAuth } from "@/context/AuthContext";
-import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
-import { FAB, IconButton, Text } from "react-native-paper";
-import { EstanteList } from "../biblioteca/estanteList";
+import { Text } from "react-native-paper";
+import { LibroList } from "./libroList";
 
-export default function Biblioteca() {
+
+
+export default function estante() {
+    const { idEstante } = useLocalSearchParams();
     const { token } = useAuth();
-    const [estantes, setEstantes] = useState([]);
+
+    const [estanteNombre, setEstanteNombre] = useState("");
+    const [show, setShow] = useState(false);
+    const [estanteList, setEstanteList] = useState([]);
+    const [nombre, setNombre] = useState("");
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const { logout } = useAuth();
 
     useFocusEffect(
         useCallback(() => {
             if (token) {
-                getEstantes();
+                getEstanteList();
             }
+            
         }, [])
     );
 
-    const getEstantes = async () => {
+    const getEstanteList = async () => {
         setLoading(true);
         try {
-            const request = await api.get("/estantes", {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const request = await api.get(`/librosList/${idEstante}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
             if (request.data.success) {
-                setEstantes(request.data.result);
+                setEstanteList(request.data.result);
+                getEstanteNombre();
             } else {
                 Alert.alert("Error", request.data.message);
             }
@@ -44,21 +54,30 @@ export default function Biblioteca() {
             setLoading(false);
             setRefreshing(false);
         }
-    };
-
-    const router = useRouter();
-    const handleNuevo = () => {
-        router.push('/biblioteca/nuevoEstante');
     }
 
-    const handleLogout = async () => {
-        await logout();
-        router.push('/login');
+    const getEstanteNombre = async () => {
+        try {
+            const request = await api.get(`/recuperar-estante/${idEstante}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            if (request.data.success) {
+                setEstanteNombre(request.data.result.nombre);
+            } else {
+                alert(request.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
+
 
     const onRefresh = () => {
         setRefreshing(true);
-        getEstantes();
     };
 
     return (
@@ -77,41 +96,23 @@ export default function Biblioteca() {
             >
                 <View style={styles.headerRow}>
                     <Text variant="displaySmall" style={styles.titulo}>
-                        Biblioteca
+                        {estanteNombre}
                     </Text>
-
-                    <IconButton
-                        icon="logout"
-                        mode="outlined"
-                        iconColor="#C69D91"
-                        size={24}
-                        onPress={handleLogout}
-                        style={styles.logoutBtn}
-                    />
                 </View>
 
-                <View>
-                    {estantes.length === 0 ? (
+                <View style={styles.listContainer}>
+                    {estanteList.length === 0 ? (
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
+                            <Text style={styles.emptyText}>Todavía no se han guardado libros en este estante</Text>
                             <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
                         </View>
                     ) : (
-                        estantes.map((estante) => (
-                            <EstanteList estante={estante} />
+                        estanteList.map((libro) => (
+                            <LibroList libro={libro} />
                         ))
                     )}
                 </View>
-                
-
             </ParallaxScrollView>
-            <FAB
-                icon="plus"
-                size='medium'
-                style={styles.fab}
-                onPress={handleNuevo}
-            >
-            </FAB>
         </>
     )
 }
@@ -132,6 +133,9 @@ const styles = StyleSheet.create({
         borderColor: '#C69D91',
         borderRadius: 12,
     },
+    listContainer: {
+
+    },
     emptyContainer: {
         marginTop: 40,
         alignItems: 'center',
@@ -140,6 +144,7 @@ const styles = StyleSheet.create({
         color: '#E4DAC9',
         fontSize: 18,
         opacity: 0.8,
+        alignItems: 'center',
     },
     emptySub: {
         color: '#C69D91',
