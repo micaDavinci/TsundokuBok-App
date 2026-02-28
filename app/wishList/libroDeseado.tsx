@@ -1,23 +1,36 @@
 import { api } from '@/api/api';
 import { useAuth } from '@/context/AuthContext';
+import { useFocusEffect } from 'expo-router';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Card, TouchableRipple } from "react-native-paper";
+import { Image, StyleSheet, View } from 'react-native';
+import { Card, Text } from "react-native-paper";
 
-type Wishtype = {
-    id: number,
-    titulo: string,
-    autor: string,
-    prioridad: string,
+type Libro = {
+    id: number;
+    titulo: string;
+    autor: string;
+    prioridad: string;
+    portada: string;
+    portadaGoogle: string;
 };
 
 type Props = {
-    wishListId: Wishtype,
+    wishListId: number;
 }
 
 export const LibroDeseado = ({ wishListId }: Props) => {
-const {  token } = useAuth();
-const [librosList, setLibrosList] = React.useState([]);
+    const { token } = useAuth();
+    const [librosList, setLibrosList] = React.useState<Libro[]>([]);
+    const server = process.env.EXPO_PUBLIC_API_URL;
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (token) {
+                getLibrosList();
+            }
+        }, [])
+    );
+
     const getLibrosList = async () => {
         try {
             const request = await api.get(`/librosList/${wishListId}`, {
@@ -36,35 +49,44 @@ const [librosList, setLibrosList] = React.useState([]);
         }
     }
     return (
-        <TouchableRipple
-            rippleColor="rgba(198, 157, 145, 0.2)"
-        >
-            <Card style={styles.card}>
-                <Card.Content style={styles.contentRow}>
-                    <></>
-                    {/* <Image
-                        style={styles.portada}
-                        source={{
-                            uri: librosList.portada
-                                ? `${server}/uploads/portadas/${librosList.portada}`
-                                : wishListId.portadaGoogle
-                                    ? wishListId.portadaGoogle
-                                    : `${server}/uploads/portadas/default-cover.jpg`
-                        }
-                        }
-                    />
-                    <View>
-                        <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
-                        <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
-                        <View style={styles.badge}>
-                            <Text style={styles.badgeText}>{libro.estado}</Text>
-                        </View>
-                    </View> */}
+        <View>
+            {librosList.length === 0 ? (
+                <Text>Todavía no se agregaron libros a la lista de deseos</Text>
+            ) : (
+                librosList.map((libro) => (
+                    <>
+                        <Card style={styles.card}>
+                            <Card.Content style={styles.contentRow}>
+                                <></>
+                                <Image
+                                    style={styles.portada}
+                                    source={{
+                                        uri: libro.portada
+                                            ? `${server}/uploads/portadas/${libro.portada}`
+                                            : libro.portadaGoogle
+                                                ? libro.portadaGoogle
+                                                : `${server}/uploads/portadas/default-cover.jpg`
+                                    }
+                                    }
+                                />
+                                <View>
+                                    <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
+                                    <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
+                                    {libro.prioridad && libro.prioridad.trim() !== "" && (
+                                        <View style={styles.badge}>
+                                            <Text style={styles.badgeText}>{libro.prioridad}</Text>
+                                        </View>
+                                    )}
+                                </View>
 
-                    
-                </Card.Content>
-            </Card>
-        </TouchableRipple>
+
+                            </Card.Content>
+                        </Card>
+                    </>
+                ))
+            )}
+
+        </View>
     )
 };
 
@@ -86,6 +108,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 1,
         borderColor: "rgba(106, 118, 102, 0.3)",
+        marginBottom: 8
     },
     content: {
         flexDirection: 'row',
@@ -107,7 +130,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     badge: {
-        backgroundColor: "#6A7666",
+        backgroundColor: "#C69D91",
         alignSelf: 'flex-start',
         paddingHorizontal: 10,
         paddingVertical: 4,

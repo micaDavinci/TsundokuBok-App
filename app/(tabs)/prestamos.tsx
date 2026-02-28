@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
-import { FAB, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { LibroPrestado } from "../prestamo/libroPrestado";
 
 export default function prestamos() {
@@ -75,11 +75,14 @@ export default function prestamos() {
                         Préstamos
                     </Text>
                 </View>
+                <View style={styles.headerRow}>
+                                    <Text style={styles.aclaracionText}>La gestión de préstamos se realiza desde la página web</Text>
+                                </View>
 
                 <View>
                     {prestamosList.length === 0 ? (
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No hay prestamos creados todavía</Text>
+                            <Text style={styles.emptyText}>No hay préstamos creados todavía</Text>
                             <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
                         </View>
                     ) : (
@@ -91,13 +94,6 @@ export default function prestamos() {
 
 
             </ParallaxScrollView>
-            <FAB
-                icon="plus"
-                size='medium'
-                style={styles.fab}
-                onPress={handleNuevo}
-            >
-            </FAB>
         </>
 
 
@@ -135,12 +131,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 8,
     },
-    fab: {
-        position: 'absolute',
-        margin: 20,
-        right: 0,
-        bottom: 0,
-        backgroundColor: '#C69D91',
-        borderRadius: 50,
+    aclaracionText: {
+        color: '#6A7666',
+        fontSize: 14,
+        opacity: 0.8,
     },
 });

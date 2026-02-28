@@ -7,27 +7,20 @@ import { Alert, RefreshControl, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { LibroDeseado } from "../wishList/libroDeseado";
 
-const Deseados = [
-    { id: 1, titulo: 'La selección', autor: 'Kiera Cass', prioridad: 'alta' },
-    { id: 2, titulo: 'La selección', autor: 'Kiera Cass', prioridad: 'alta' },
-    { id: 3, titulo: 'La selección', autor: 'Kiera Cass', prioridad: 'alta' },
-    { id: 4, titulo: 'La selección', autor: 'Kiera Cass', prioridad: 'alta' },
-
-];
 
 export default function wishList() {
-    const {token} = useAuth();
-    const [wishListId, setWishListId] = useState("");
+    const { token } = useAuth();
+    const [wishListId, setWishListId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
     useFocusEffect(
-            useCallback(() => {
-                if (token) {
-                    getWishList();
-                }
-            }, [])
-        );
+        useCallback(() => {
+            if (token) {
+                getWishList();
+            }
+        }, [])
+    );
 
     const getWishList = async () => {
         try {
@@ -41,10 +34,7 @@ export default function wishList() {
 
                 if (result.length > 0) {
                     setWishListId(result[0].id_estante);
-                } else {
-                    setWishListId("");
                 }
-
             } else {
                 Alert.alert(request.data.message);
             }
@@ -59,7 +49,7 @@ export default function wishList() {
         setRefreshing(true);
     };
 
-   return (
+    return (
         <>
             <Stack.Screen options={{ headerShown: false }} />
 
@@ -73,33 +63,23 @@ export default function wishList() {
                     />
                 }
             >
-                <View style={styles.headerRow}>
+                <View>
                     <Text variant="displaySmall" style={styles.titulo}>
-                        Préstamos
+                        Lista de deseos
                     </Text>
+                    
+                </View>
+                <View style={styles.headerRow}>
+                    <Text style={styles.aclaracionText}>La gestión de la lista de deseos se realiza desde la página web</Text>
                 </View>
 
                 <View>
-                    {wishListId.length === 0 ? (
-                        <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No hay prestamos creados todavía</Text>
-                            <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
-                        </View>
-                    ) : (
+                    {wishListId !== null && (
                         <LibroDeseado wishListId={wishListId} />
-                        )
-                    }
+                    )}         
                 </View>
 
-
             </ParallaxScrollView>
-            <FAB
-                icon="plus"
-                size='medium'
-                style={styles.fab}
-                onPress={handleNuevo}
-            >
-            </FAB>
         </>
 
 
@@ -137,12 +117,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 8,
     },
-    fab: {
-        position: 'absolute',
-        margin: 20,
-        right: 0,
-        bottom: 0,
-        backgroundColor: '#C69D91',
-        borderRadius: 50,
+    aclaracionText: {
+        color: '#6A7666',
+        fontSize: 14,
+        opacity: 0.8,
     },
 });
