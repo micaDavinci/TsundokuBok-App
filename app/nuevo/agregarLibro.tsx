@@ -203,152 +203,152 @@ export default function agregarLibro() {
     };
     return (
         <>
-        <Stack.Screen options={{ headerShown: false }} />
-        
-        <ScrollView style={styles.mainContainer} contentContainerStyle={styles.scrollContent}>
-            <Text variant="headlineMedium" style={styles.tituloHeader}>Nuevo Libro</Text>
+            <Stack.Screen options={{ headerShown: false }} />
 
-            {/* Sección de Portada */}
-            <View style={styles.portadaContainer}>
-                {previewUrl ? (
-                    // <Image source={{uri: previewUrl }} style={styles.previewImage} />
-                    <Image />
-                ) : (
-                    <View style={[styles.previewImage, styles.placeholderImage]}>
-                        <Text style={{ color: '#6A7666' }}>Sin Portada</Text>
+            <ScrollView style={styles.mainContainer} contentContainerStyle={styles.scrollContent}>
+                <Text variant="headlineMedium" style={styles.tituloHeader}>Nuevo Libro</Text>
+
+                {/* Sección de Portada */}
+                <View style={styles.portadaContainer}>
+                    {previewUrl ? (
+                        // <Image source={{uri: previewUrl }} style={styles.previewImage} />
+                        <Image />
+                    ) : (
+                        <View style={[styles.previewImage, styles.placeholderImage]}>
+                            <Text style={{ color: '#6A7666' }}>Sin Portada</Text>
+                        </View>
+                    )}
+                    <Button
+                        //   mode="outlined" 
+                        //   onPress={handlePortadaChange} 
+                        //   style={styles.buttonFile}
+                        textColor="#C69D91"
+                    >
+                        Seleccionar Imagen
+                    </Button>
+                </View>
+
+                {/* Inputs Principales */}
+                <TextInput
+                    label="Título"
+                    value={titulo}
+                    onChangeText={seTtitulo}
+                    mode="outlined"
+                    style={styles.input}
+                    outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
+                />
+
+                <TextInput
+                    label="Autor/a"
+                    value={autor}
+                    onChangeText={setAutor}
+                    mode="outlined"
+                    style={styles.input}
+                    outlineColor="#6A7666"
+                    activeOutlineColor="#C69D91"
+                    textColor="#E4DAC9"
+                />
+
+                {/* Selectores (Destino y Ubicación/Prioridad) */}
+                <View style={styles.row}>
+                    <View style={styles.flex1}>
+                        <Text style={styles.label}>Agregar a</Text>
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={destino}
+                                onValueChange={(itemValue) => setDestino(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="#E4DAC9"
+                            >
+                                <Picker.Item label="Seleccione" value="" />
+                                <Picker.Item label="Biblioteca" value="1" />
+                                <Picker.Item label="Lista de deseos" value="2" />
+                            </Picker>
+                        </View>
                     </View>
-                )}
+
+                    <View style={styles.flex1}>
+                        <Text style={styles.label}>
+                            {destino === "2" ? "Prioridad" : "Ubicación"}
+                        </Text>
+                        <View style={[styles.pickerWrapper, destino === "" && styles.disabledPicker]}>
+                            <Picker
+                                selectedValue={segundoValor}
+                                enabled={destino !== ""}
+                                onValueChange={(itemValue) => setSegundoValor(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="#E4DAC9"
+                            >
+                                <Picker.Item label="Seleccione" value="" />
+                                {opcionesSegundoCombo.map((opcion) => (
+                                    <Picker.Item
+                                        key={opcion.id_estante ?? opcion.id}
+                                        label={opcion.nombre}
+                                        value={opcion.id_estante ?? opcion.id}
+                                    />
+                                ))}
+                            </Picker>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Datos Técnicos en Fila */}
+                <View style={styles.row}>
+                    <TextInput
+                        label="Año"
+                        value={edicion}
+                        onChangeText={setEdicion}
+                        keyboardType="numeric"
+                        mode="outlined"
+                        style={[styles.input, styles.flex1, { marginRight: 8 }]}
+                    />
+                    <TextInput
+                        label="Páginas"
+                        value={paginas}
+                        onChangeText={setPaginas}
+                        keyboardType="numeric"
+                        mode="outlined"
+                        style={[styles.input, styles.flex1]}
+                    />
+                </View>
+
+                <TextInput
+                    label="Idioma"
+                    value={idioma}
+                    onChangeText={setIdioma}
+                    mode="outlined"
+                    style={styles.input}
+                />
+
+                <TextInput
+                    label="Género/s"
+                    value={genero}
+                    onChangeText={setGenero}
+                    mode="outlined"
+                    style={styles.input}
+                />
+
+                <TextInput
+                    label="Sinópsis"
+                    value={sinopsis}
+                    onChangeText={setSinopsis}
+                    mode="outlined"
+                    multiline
+                    numberOfLines={6}
+                    style={[styles.input, styles.textArea]}
+                />
+
                 <Button
-                    //   mode="outlined" 
-                    //   onPress={handlePortadaChange} 
-                    //   style={styles.buttonFile}
-                    textColor="#C69D91"
+                    mode="contained"
+                    onPress={handleNuevo}
+                    style={styles.submitButton}
+                    labelStyle={{ fontWeight: 'bold' }}
                 >
-                    Seleccionar Imagen
+                    Guardar Libro
                 </Button>
-            </View>
-
-            {/* Inputs Principales */}
-            <TextInput
-                label="Título"
-                value={titulo}
-                onChangeText={seTtitulo}
-                mode="outlined"
-                style={styles.input}
-                outlineColor="#6A7666"
-                activeOutlineColor="#C69D91"
-                textColor="#E4DAC9"
-            />
-
-            <TextInput
-                label="Autor/a"
-                value={autor}
-                onChangeText={setAutor}
-                mode="outlined"
-                style={styles.input}
-                outlineColor="#6A7666"
-                activeOutlineColor="#C69D91"
-                textColor="#E4DAC9"
-            />
-
-            {/* Selectores (Destino y Ubicación/Prioridad) */}
-            <View style={styles.row}>
-                <View style={styles.flex1}>
-                    <Text style={styles.label}>Agregar a</Text>
-                    <View style={styles.pickerWrapper}>
-                        <Picker
-              selectedValue={destino}
-              onValueChange={(itemValue) => setDestino(itemValue)}
-              style={styles.picker}
-              dropdownIconColor="#E4DAC9"
-            >
-              <Picker.Item label="Seleccione" value="" />
-              <Picker.Item label="Biblioteca" value="1" />
-              <Picker.Item label="Lista de deseos" value="2" />
-            </Picker>
-                    </View>
-                </View>
-
-                <View style={styles.flex1}>
-                    <Text style={styles.label}>
-                        {destino === "2" ? "Prioridad" : "Ubicación"}
-                    </Text>
-                    <View style={[styles.pickerWrapper, destino === "" && styles.disabledPicker]}>
-                        <Picker
-                            selectedValue={segundoValor}
-                            enabled={destino !== ""}
-                            onValueChange={(itemValue) => setSegundoValor(itemValue)}
-                            style={styles.picker}
-                            dropdownIconColor="#E4DAC9"
-                        >
-                            <Picker.Item label="Seleccione" value="" />
-                            {opcionesSegundoCombo.map((opcion) => (
-                                <Picker.Item
-                                    key={opcion.id_estante ?? opcion.id}
-                                    label={opcion.nombre}
-                                    value={opcion.id_estante ?? opcion.id}
-                                />
-                            ))}
-                        </Picker>
-                    </View>
-                </View>
-            </View>
-
-            {/* Datos Técnicos en Fila */}
-            <View style={styles.row}>
-                <TextInput
-                    label="Año"
-                    value={edicion}
-                    onChangeText={setEdicion}
-                    keyboardType="numeric"
-                    mode="outlined"
-                    style={[styles.input, styles.flex1, { marginRight: 8 }]}
-                />
-                <TextInput
-                    label="Páginas"
-                    value={paginas}
-                    onChangeText={setPaginas}
-                    keyboardType="numeric"
-                    mode="outlined"
-                    style={[styles.input, styles.flex1]}
-                />
-            </View>
-
-            <TextInput
-                label="Idioma"
-                value={idioma}
-                onChangeText={setIdioma}
-                mode="outlined"
-                style={styles.input}
-            />
-
-            <TextInput
-                label="Género/s"
-                value={genero}
-                onChangeText={setGenero}
-                mode="outlined"
-                style={styles.input}
-            />
-
-            <TextInput
-                label="Sinópsis"
-                value={sinopsis}
-                onChangeText={setSinopsis}
-                mode="outlined"
-                multiline
-                numberOfLines={6}
-                style={[styles.input, styles.textArea]}
-            />
-
-            <Button
-                mode="contained"
-                onPress={handleNuevo}
-                style={styles.submitButton}
-                labelStyle={{ fontWeight: 'bold' }}
-            >
-                Guardar Libro
-            </Button>
-        </ScrollView>
+            </ScrollView>
         </>
     )
 }

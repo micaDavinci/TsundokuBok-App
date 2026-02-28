@@ -1,14 +1,67 @@
-import { useRoute } from "@react-navigation/native";
-import { Stack } from "expo-router";
-import React from "react";
+import { api } from "@/api/api";
+import { useAuth } from "@/context/AuthContext";
+import { Stack, useRouter } from "expo-router";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
 
 export default function NuevoPrestamo() {
 
-    const [persona, setPersona] = React.useState("");
-    const [fecha, setFecha] = React.useState("");
-    const router = useRoute();
+    const { token } = useAuth();
+    const [librosDisponibles, setLibrosDisponibles] = useState([]);
+    const [persona, setPersona] = useState("");
+    const [libro, setLibro] = useState("");
+    const [fechaPrestamo, setFechaPrestamo] = useState("");
+    const router = useRouter();
+
+    const getLibrosDisponibles = async () => {
+        try {
+            const request = await api.get(`/libros-disponibles`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (request.data.success) {
+                setLibrosDisponibles(request.data.result);
+            } else {
+                alert(request.data.message);
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Ha surgido un error, por favor intente más tarde");
+        }
+    }
+
+    const handleNuevo = async () => {
+        try {
+            const request = await api.post(`/crear-prestamo`,
+                {
+                    id_libro: libro, 
+                    persona, 
+                    fecha_prestamo: fechaPrestamo
+                }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            if (request.data.success) {
+                setPersona("");
+                setLibro("");
+                setFechaPrestamo("");
+            } else {
+                alert(request.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Ha surgido un error, por favor intente más tarde");
+        }
+    }
+
+    const handleCancel = () => {
+        router.back();
+    }
     return (
         <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
@@ -16,12 +69,14 @@ export default function NuevoPrestamo() {
                 <Card.Content>
                     <Text variant="headlineSmall" style={styles.tituloTexto}>Nuevo Préstamo</Text>
 
+
                     <TextInput
                         label="Persona"
                         value={persona}
                         mode="outlined"
                         outlineColor="#E4DAC9"
                         activeOutlineColor="#E4DAC9"
+                        textColor="#E4DAC9"
                         style={styles.input}
                         onChangeText={setPersona}
                         theme={{
@@ -38,8 +93,9 @@ export default function NuevoPrestamo() {
                         mode="outlined"
                         outlineColor="#E4DAC9"
                         activeOutlineColor="#E4DAC9"
+                        textColor="#E4DAC9"
                         style={styles.input}
-                        onChangeText={setFecha}
+                        onChangeText={setFechaPrestamo}
                         theme={{
                             colors: {
                                 onSurfaceVariant: '#E4DAC9',
@@ -61,7 +117,7 @@ export default function NuevoPrestamo() {
                         mode="text"
                         style={styles.buttonSecondary}
                         labelStyle={{ color: '#808080' }}
-                        onPress={() => console.log('Cancelado')}
+                        onPress={handleCancel}
                     >
                         Cancelar
                     </Button>

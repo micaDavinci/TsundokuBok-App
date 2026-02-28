@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 120,
         borderRadius: 8,
-        backgroundColor: '#3e444a', // Color de carga mientras baja la imagen
+        backgroundColor: '#3e444a',
     },
     titulo: {
         color: "#E4DAC9",
@@ -192,8 +192,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     badge: {
-        backgroundColor: "#6A7666", // Tu verde seco
-        alignSelf: 'flex-start',    // Para que no ocupe todo el ancho
+        backgroundColor: "#6A7666",
+        alignSelf: 'flex-start',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 20,

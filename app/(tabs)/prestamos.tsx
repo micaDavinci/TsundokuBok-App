@@ -1,11 +1,10 @@
+import { api } from "@/api/api";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
-import { useRouter } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
-import { FAB } from "react-native-paper";
+import { Alert, RefreshControl, StyleSheet, View } from "react-native";
+import { FAB, Text } from "react-native-paper";
 import { LibroPrestado } from "../prestamo/libroPrestado";
 
 const Prestamos = [
@@ -18,9 +17,38 @@ const Prestamos = [
 
 
 export default function prestamos() {
+
+    const [show, setShow] = useState(false);
+
+    const { token } = useAuth();
+    const [prestamosList, setPrestamosList] = useState([]);
+    const [librosDisponibles, setLibrosDisponibles] = useState([]);
+    const [persona, setPersona] = useState("");
+    const [libro, setLibro] = useState("");
+    const [fechaPrestamo, setFechaPrestamo] = useState("");
+
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+
+const getPrestamoList = async () => {
+        try {
+            const request = await api.get(`/prestamos`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (request.data.success) {
+                setPrestamosList(request.data.result);
+            } else {
+                Alert.alert(request.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "Ha surgido un error, por favor intente más tarde");
+        }
+    }
+
     const handleNuevo = () => {
         router.push('/prestamo/nuevoPrestamo');
     }
@@ -30,61 +58,90 @@ export default function prestamos() {
     };
     
     return (
-        <ParallaxScrollView headerBackgroundColor={{ light: '#6A7666', dark: '#2B3035' }}
-            refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    tintColor="#C69D91"
-                    colors={["#C69D91"]}
-                />
-            }
-        >
-            <ThemedView style={styles.titleContainer}>
-                <ThemedText type='title'
-                    style={styles.titulo}>
-                    Préstamos
-                </ThemedText>
-            </ThemedView>
+        <>
+            <Stack.Screen options={{ headerShown: false }} />
 
-            <ScrollView>
-                {Prestamos.map((prestado) => (
-                    <LibroPrestado
-                        key={prestado.id}
-                        id={prestado.id}
-                        titulo={prestado.titulo}
-                        autor={prestado.autor}
-                        persona={prestado.persona}
-                        estado={prestado.estado} />
-                ))}
+            <ParallaxScrollView headerBackgroundColor={{ light: '#6A7666', dark: '#2B3035' }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor="#C69D91"
+                        colors={["#C69D91"]}
+                    />
+                }
+            >
+                <View style={styles.headerRow}>
+                    <Text variant="displaySmall" style={styles.titulo}>
+                        Préstamos
+                    </Text>
+                </View>
 
-            </ScrollView>
+                <View>
+                    {prestamosList.length === 0 ? (
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>No hay estantes creados todavía</Text>
+                            <Text style={styles.emptySub}>Desliza hacia abajo para actualizar</Text>
+                        </View>
+                    ) : (
+                        prestamosList.map((prestamo) => (
+                            <LibroPrestado prestamo={prestamo} />
+                        ))
+                    )}
+                </View>
+                
+
+            </ParallaxScrollView>
             <FAB
                 icon="plus"
                 size='medium'
                 style={styles.fab}
                 onPress={handleNuevo}
-            />
-        </ParallaxScrollView>
+            >
+            </FAB>
+        </>
+
+
+
     )
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
+    headerRow: {
         flexDirection: 'row',
-        gap: 8,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 10,
     },
     titulo: {
         color: '#E4DAC9',
-        marginBottom: 16,
         fontWeight: 'bold',
-        fontFamily: Fonts.rounded
+    },
+    logoutBtn: {
+        borderColor: '#C69D91',
+        borderRadius: 12,
+    },
+    emptyContainer: {
+        marginTop: 40,
+        alignItems: 'center',
+    },
+    emptyText: {
+        color: '#E4DAC9',
+        fontSize: 18,
+        opacity: 0.8,
+    },
+    emptySub: {
+        color: '#C69D91',
+        fontSize: 14,
+        marginTop: 8,
     },
     fab: {
         position: 'absolute',
-        margin: 16,
+        margin: 20,
         right: 0,
         bottom: 0,
         backgroundColor: '#C69D91',
-    }
-})
+        borderRadius: 50,
+    },
+});
