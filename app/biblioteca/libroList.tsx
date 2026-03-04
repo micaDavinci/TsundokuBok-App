@@ -142,15 +142,15 @@ export const LibroList = ({ libro }: Props) => {
                             style={styles.portada}
                             source={{
                                 uri: libro.portada
-                                    ? `${server}/uploads/portadas/${libro.portada}`
+                                    ? libro.portada
                                     : libro.portadaGoogle
                                         ? libro.portadaGoogle
                                         : `${server}/uploads/portadas/default-cover.jpg`
                             }
                             }
                         />
-                        <View>
-                            <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
+                        <View style={styles.infoContainer}>
+                            <Text variant="titleMedium" style={styles.titulo}>{libro.titulo}</Text>
                             <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
                             <View style={styles.badge}>
                                 <Text style={styles.badgeText}>{libro.estado}</Text>
@@ -183,16 +183,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "rgba(106, 118, 102, 0.3)",
     },
-    content: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
     portada: {
         width: 80,
         height: 120,
         borderRadius: 8,
         backgroundColor: '#3e444a',
+    },
+    infoContainer: {
+        flex: 1,
+        justifyContent: 'center',
     },
     titulo: {
         color: "#E4DAC9",

@@ -40,7 +40,7 @@ const Resultado = ({ book } : Props) => {
         </View>
 
         <Card.Content style={styles.content}>
-          <Text variant="titleMedium" numberOfLines={2} style={styles.title}>
+          <Text variant="titleMedium" style={styles.title}>
             {title}
           </Text>
           <Text variant="bodySmall" numberOfLines={1} style={styles.author}>
@@ -105,6 +105,8 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 12,
     paddingHorizontal: 8,
+    flex: 1,
+    justifyContent: 'center',
   },
   title: {
     color: '#E4DAC9', // Tu crema
