@@ -123,16 +123,19 @@ export default function NuevoPrestamo() {
                             visible={menuVisible}
                             onDismiss={() => setMenuVisible(false)}
                             anchor={
-                                <Button
-                                    mode="outlined"
-                                    onPress={() => setMenuVisible(true)}
-                                    style={{ borderColor: "#E4DAC9" }}
-                                    labelStyle={{ color: "#E4DAC9" }}
-                                >
+                                <TextInput
+                                    label="Libro"
+                                    value=
                                     {libro
                                         ? librosDisponibles.find(l => l.id === libro)?.titulo
                                         : "[Seleccione un libro]"}
-                                </Button>
+                                    onPressIn={() => setMenuVisible(true)}
+                                    mode="outlined"
+                                    style={styles.input}
+                                    outlineColor="#E4DAC9"
+                                    activeOutlineColor="#E4DAC9"
+                                    textColor="#E4DAC9"
+                                ></TextInput>
                             }
                         >
                             {librosDisponibles.map((libroD) => (
@@ -147,6 +150,8 @@ export default function NuevoPrestamo() {
                             ))}
                         </Menu>
                     </View>
+
+
 
                     <TextInput
                         label="Persona"
