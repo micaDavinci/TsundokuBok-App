@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     buttonManual: {
         backgroundColor: 'transparent',
         borderColor: '#C69D91',
-        borderWidth: 40,
+        borderWidth: 1,
     },
     buttonLabel: {
         color: '#E4DAC9',

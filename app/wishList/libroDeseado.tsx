@@ -62,15 +62,15 @@ export const LibroDeseado = ({ wishListId }: Props) => {
                                     style={styles.portada}
                                     source={{
                                         uri: libro.portada
-                                            ? `${server}/uploads/portadas/${libro.portada}`
+                                            ? libro.portada
                                             : libro.portadaGoogle
                                                 ? libro.portadaGoogle
                                                 : `${server}/uploads/portadas/default-cover.jpg`
                                     }
                                     }
                                 />
-                                <View>
-                                    <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{libro.titulo}</Text>
+                                <View style={styles.infoContainer}>
+                                    <Text variant="titleMedium" style={styles.titulo}>{libro.titulo}</Text>
                                     <Text variant='labelLarge' style={styles.autor}>{libro.autor}</Text>
                                     {libro.prioridad && libro.prioridad.trim() !== "" && (
                                         <View style={styles.badge}>
@@ -120,6 +120,10 @@ const styles = StyleSheet.create({
         height: 120,
         borderRadius: 8,
         backgroundColor: '#3e444a',
+    },
+    infoContainer: {
+        flex: 1,
+        justifyContent: 'center',
     },
     titulo: {
         color: "#E4DAC9",

@@ -25,7 +25,22 @@ export const LibroPrestado = ({ prestamo }: Props) => {
     const [personaNueva, setPersonaNueva] =  React.useState("");
     const [fechaNueva, setFechaNueva] =  React.useState("");
 
+    const formatearFecha = (fechaStr: string) => {
+        if (!fechaStr) return "-";
+        const fecha = new Date(fechaStr);
+        
+        // Verificamos si la fecha es válida para evitar "Invalid Date"
+        if (isNaN(fecha.getTime())) return fechaStr; 
+
+        return fecha.toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    };
+
     return (
+        <View style={styles.containerSeparador}>
         <TouchableRipple
             rippleColor="rgba(198, 157, 145, 0.2)"
         >
@@ -35,38 +50,40 @@ export const LibroPrestado = ({ prestamo }: Props) => {
                         style={styles.portada}
                         source={{
                             uri: prestamo.portada
-                                ? `${server}/uploads/portadas/${prestamo.portada}`
+                                ? prestamo.portada
                                 : prestamo.portadaGoogle
                                     ? prestamo.portadaGoogle
                                     : `${server}/uploads/portadas/default-cover.jpg`
                         }
                         }
                     />
-                    <View>
-                        <Text variant="titleLarge" style={styles.titulo} numberOfLines={2}>{prestamo.titulo}</Text>
+                    <View style={styles.infoContainer}>
+                        <Text variant="titleMedium" style={styles.titulo}>{prestamo.titulo}</Text>
                         <Text variant='labelLarge' style={styles.autor}>{prestamo.autor}</Text>
-                        <Text variant="titleLarge" style={styles.titulo}>{prestamo.persona}</Text>
-                        <Text variant='labelLarge' style={styles.autor}>Fecha de préstamo: {prestamo.fecha_prestamo}</Text>
+                        <Text variant="titleMedium" style={styles.titulo}>{prestamo.persona}</Text>
+                        <Text variant='labelLarge' style={styles.autor}>Fecha de préstamo: {formatearFecha(prestamo.fecha_prestamo)}</Text>
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>{prestamo.estado}</Text>
                         </View>
-                    </View>
-
-                    
+                    </View>    
                 </Card.Content>
             </Card>
         </TouchableRipple>
+        </View>
     )
 };
 
 const styles = StyleSheet.create({
+    containerSeparador: {
+        paddingVertical: 6,
+    },
     contentRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 12,
+        padding:10
     }, ripple: {
-        width: '100%',
-        marginBottom: 8,
+       borderRadius: 12,
     },
     link: {
         width: '100%',
@@ -77,17 +94,17 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 1,
         borderColor: "rgba(106, 118, 102, 0.3)",
-    },
-    content: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        elevation: 4,
     },
     portada: {
         width: 80,
         height: 120,
         borderRadius: 8,
         backgroundColor: '#3e444a',
+    },
+    infoContainer: {
+        flex: 1,
+        justifyContent: 'center',
     },
     titulo: {
         color: "#E4DAC9",
