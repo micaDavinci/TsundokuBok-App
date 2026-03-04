@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 import { LibroPrestado } from "../prestamo/libroPrestado";
 
 export default function prestamos() {
@@ -48,6 +48,7 @@ export default function prestamos() {
         }
     }
 
+
     const handleNuevo = () => {
         router.push('/prestamo/nuevoPrestamo');
     }
@@ -76,7 +77,7 @@ export default function prestamos() {
                     </Text>
                 </View>
                 <View style={styles.headerRow}>
-                                    <Text style={styles.aclaracionText}>La gestión de préstamos se realiza desde la página web</Text>
+                                    <Text style={styles.aclaracionText}>La gestión completa de préstamos se realiza desde la página web</Text>
                                 </View>
 
                 <View>
@@ -94,6 +95,13 @@ export default function prestamos() {
 
 
             </ParallaxScrollView>
+            <FAB
+                icon="plus"
+                size='medium'
+                style={styles.fab}
+                onPress={handleNuevo}
+            >
+            </FAB>
         </>
 
 
@@ -135,5 +143,13 @@ const styles = StyleSheet.create({
         color: '#6A7666',
         fontSize: 14,
         opacity: 0.8,
+    },
+    fab: {
+        position: 'absolute',
+        margin: 20,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#C69D91',
+        borderRadius: 50,
     },
 });
