@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, RefreshControl, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, FAB, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { LibroList } from "./libroList";
 
 
@@ -21,12 +21,13 @@ export default function estante() {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
+
     useFocusEffect(
         useCallback(() => {
             if (token) {
                 getEstanteList();
             }
-            
+
         }, [])
     );
 
@@ -75,6 +76,35 @@ export default function estante() {
         }
     }
 
+    const handleEdit = async () => {
+         try {
+            const request = await api.put(`/editar-estante/${idEstante}`,
+                {
+                    nombre
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            if (request.data.success) {
+                handleClose();
+                await getEstanteList();
+                setNombre("");
+
+            } else {
+                Alert.alert("Error", request.data.message);
+            }
+        } catch (error: any) {
+            console.error("Error completo", error);
+            const mensaje = error.response?.data?.message
+            Alert.alert("Error", mensaje);
+        }
+    }
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -113,6 +143,58 @@ export default function estante() {
                     )}
                 </View>
             </ParallaxScrollView>
+            <FAB
+                icon="pencil"
+                size='medium'
+                style={styles.fab}
+                onPress={handleShow}
+            >
+            </FAB>
+
+
+            <Portal>
+                <Modal visible={show} onDismiss={handleClose} contentContainerStyle={styles.containerStyle}>
+                    <Text variant="headlineSmall" style={styles.tituloEdit}>Editar estante</Text>
+
+                    <TextInput
+                        label="Nombre"
+                        value={nombre}
+                        placeholder={estanteNombre}
+                        mode="outlined"
+                        outlineColor="#E4DAC9"
+                        activeOutlineColor="#E4DAC9"
+                        textColor="#E4DAC9"
+                        style={styles.input}
+                        onChangeText={setNombre}
+                        theme={{
+                            colors: {
+                                onSurfaceVariant: '#E4DAC9',
+                                primary: '#E4DAC9',
+                            }
+                        }}
+                    />
+
+                    <Button
+                        mode="contained"
+                        style={styles.button}
+                        labelStyle={{ color: '#E4DAC9', fontWeight: 'bold' }}
+                    onPress={handleEdit}
+                    >
+                        Guardar
+                    </Button>
+
+                    <Button
+                        mode="text"
+                        style={styles.buttonSecondary}
+                        labelStyle={{ color: '#2B3035' }}
+                        onPress={handleClose}
+                    >
+                        Cancelar
+                    </Button>
+                </Modal>
+            </Portal>
+
+
         </>
     )
 }
@@ -158,5 +240,32 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: '#C69D91',
         borderRadius: 50,
+    },
+    containerStyle: {
+        width: '85%',
+        backgroundColor: "#808080",
+        borderRadius: 24,
+        padding: 24,
+        alignSelf: 'center',
+    },
+    tituloEdit: {
+        color: '#E4DAC9',
+        textAlign: 'center',
+        marginBottom: 20,
+        fontWeight: 'bold',
+        fontSize: 22,
+        paddingBottom: 8
+    },
+    input: {
+        marginVertical: 8,
+        backgroundColor: "#808080"
+    },
+    button: {
+        backgroundColor: "#6A7666",
+        marginTop: 20,
+        borderRadius: 15,
+    },
+    buttonSecondary: {
+        marginTop: 8,
     },
 });
